@@ -51,6 +51,8 @@ class FixMetadynamicsKokkos : public FixMetadynamics {
 
   typename AT::t_float_1d d_hill_centers;
 
+  KOKKOS_INLINE_FUNCTION
+  double rmsd();
 };
 
 }

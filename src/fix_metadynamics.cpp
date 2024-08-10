@@ -17,7 +17,7 @@
 #include "domain.h"
 #include "error.h"
 #include "input.h"
-#include "math_eigen_impl.h"    //functions to calculate eigenvalues and eigenvectors
+#include "math_eigen_impl.h"
 #include "math_special.h"
 #include "memory.h"
 #include "modify.h"
@@ -28,6 +28,7 @@
 #include "superpose3d.h"
 
 
+#include <algorithm>
 #include <cmath>
 #include <cstring>
 
@@ -37,32 +38,41 @@ using namespace LAMMPS_NS;
 using namespace FixConst;
 using namespace MathSpecial;
 
+static constexpr int HILLS_DELTA = 16;
 
 /* ---------------------------------------------------------------------- */
 
 FixMetadynamics::FixMetadynamics(LAMMPS *lmp, int narg, char **arg) :
-    Fix(lmp, narg, arg), xstr(nullptr), ystr(nullptr), zstr(nullptr), idregion(nullptr),
-    region(nullptr)
+    Fix(lmp, narg, arg)
 {
   //if (narg < 6) utils::missing_cmd_args(FLERR, "fix setforce", error);
 
-  lowerBoundary = 0.0;
-  upperBoundary = 30.0;
-  width = 0.25;
+  lower_boundary = 0.0;
+  upper_boundary = 10.0;
+  width = 1.0;
 
-  hillWeight = 0.1;
-  hillWidth = 2.0;
-  newHillFrequency = 10;
-  outputFreq = 100;
+  hill_weight = 0.1;
+  hill_width = 2.0;
+  new_hill_freq = 5;
+  output_freq = 100;
 
-  lowerWalls = 0.5;
-  upperWalls = 29.5;
-  forceConstant = 10.0;
+  lower_walls = 0.5;
+  upper_walls = 29.5;
+  force_constant = 10.0;
+
+  if (hill_width > 0.0)
+    colvar_sigma = width * hill_width / 2.0;
+
+  hills_grid_size = floor(upper_boundary-lower_boundary)/width;
+  memory->create(hills_grid,hills_grid_size,2,"metadynamics:hills_grid");
 
   N=3;
 
   MathEigen::Alloc2D(N, 3, &aaXf_shifted);
   MathEigen::Alloc2D(N, 3, &aaXm_shifted);
+
+  memory->create(refPositions,3,3,"metadynamics:refPositions");
+
 }
 
 /* ---------------------------------------------------------------------- */
@@ -71,6 +81,7 @@ FixMetadynamics::~FixMetadynamics()
 {
   if (copymode) return;
 
+  memory->destroy(refPositions);
 
 }
 
@@ -80,16 +91,7 @@ int FixMetadynamics::setmask()
 {
   int mask = 0;
   mask |= POST_FORCE;
-  mask |= POST_FORCE_RESPA;
-  mask |= MIN_POST_FORCE;
   return mask;
-}
-
-/* ---------------------------------------------------------------------- */
-
-void FixMetadynamics::init()
-{
-
 }
 
 /* ---------------------------------------------------------------------- */
@@ -112,26 +114,122 @@ void FixMetadynamics::post_force(int /*vflag*/)
   //int *mask = atom->mask;
   //int nlocal = atom->nlocal;
 
-  //double b[3][3] = {0.0};
+  // Update the cached colvar values
+  //for (size_t i = 0; i < num_variables(); i++) {
+  //  colvar_values[i] = colvars[i]->value();
+  //}
 
-  double **b;
-  memory->create(b,3,3,"metadynamics:b");
+  //domain->remap(x[0]);
+  //domain->remap(x[1]);
+  //domain->remap(x[2]);
+  domain->minimum_image_big(x[0][0],x[0][1],x[0][2]);
+  domain->minimum_image_big(x[1][0],x[1][1],x[1][2]);
+  domain->minimum_image_big(x[2][0],x[2][1],x[2][2]);
+  //domain->pbc();
 
-  Superpose3D<double, double **> superposer(3);
-  double tmp = superposer.Superpose(x, b);
+  colvar_value = rmsd(x,refPositions,3);
 
-  domain->remap(x[0]);
-  domain->remap(x[1]);
-  domain->remap(x[2]);
-  //domain->minimum_image(x[0][0],x[0][1],x[0][2]);
-  //domain->minimum_image(x[1][0],x[1][1],x[1][2]);
-  //domain->minimum_image(x[2][0],x[2][1],x[2][2]);
+  // add new biasing energy/forces
+  update_bias();
 
-  domain->pbc();
+  if (use_grids) {
+    // update grid content to reflect new bias
+    update_grid_data();
+    int i = 2.0*(colvar_value-lower_boundary)-1.0;
+    bias_energy = hills_grid[i][0];
+    colvar_force = hills_grid[i][1];
+  } else {
+    bias_energy = calc_energy(colvar_value);
+    colvar_force = calc_force(colvar_value);
+  }
 
-  std::cerr << fmt::format("*** x[0] = {} {} {} b[0] = {} {} {} rmsd = {} Superpose3D rmsd {}\n",
-    x[0][0],x[0][1],x[0][2],b[0][0],b[0][1],b[0][2],rmsd(x,b,3),tmp );
+  std::cout << fmt::format("   *** x[0] {:.6} {:.6} {:.6} colvar_value {:.6} bias_energy {:.6} colvar_force {:.6}\n", x[0][0],x[0][1],x[0][2],colvar_value,bias_energy,colvar_force );
 
+}
+
+bool FixMetadynamics::can_accumulate_data()
+{
+  return( (update->ntimestep - update->firststep) > 0 );
+}
+
+bool FixMetadynamics::debug() { return true; }
+
+void FixMetadynamics::update_bias()
+{
+
+  // add a new hill if the required time interval has passed
+  if (((update->ntimestep % new_hill_freq) == 0) && can_accumulate_data() ) {
+
+    double hills_scale=1.0;
+
+    hill h = hill(
+      update->ntimestep,
+      hill_weight*hills_scale,
+      colvar_value,
+      colvar_sigma);
+
+    hills.push_back(h);
+
+    // FIXME: if there is more than one replica,
+    // communicate it to the others
+
+    if (debug())
+      utils::logmesg(lmp,"   *** Metadynamics bias \"{}\": adding a new hill at step {} W {:.6} center {:.6} sigma {:.6}.\n", this->name,update->ntimestep,h.W,h.center,h.sigma);
+
+  }
+}
+
+void FixMetadynamics::update_grid_data()
+{
+  if ((update->ntimestep % new_hill_freq) == 0) {
+
+    // memset is for C coders back in 1990s
+    std::fill_n(hills_grid[0],hills_grid_size*2,0.0);
+
+    for( int i=0; i<hills_grid_size ; i++ ) {
+      double x = lower_boundary+((double)i+0.5)*width;
+      hills_grid[i][0] = calc_energy(x);
+      hills_grid[i][1] = calc_force(x);
+      std::cerr << fmt::format("   *** hills_grid[{}] {} {} {}\n",
+        i,x,hills_grid[i][0],hills_grid[i][1]);
+    }
+  }
+}
+
+double FixMetadynamics::calc_energy(double x)
+{
+  double energy = 0.0;
+
+  for (hill_iter h = hills.begin(); h != hills.end(); h++) {
+
+    // compute the gaussian exponent
+    double cv_sqdev = square(x - h->center) / square(h->sigma);
+
+    // compute the gaussian
+    if (cv_sqdev > 23.0) {
+      // set it to zero if the exponent is more negative than log(1.0E-06)
+      h->value(0.0);
+    } else {
+      h->value(exp(-0.5*cv_sqdev));
+    }
+    energy += h->energy();
+    //std::cout << fmt::format("   *** colvar_value {:.6} h->center {:.6} h->sigma {:.6} cv_sqdev {:.6} h->value {:.6} h->energy {:.6} bias_energy {:.6}\n",colvar_value,h->center,h->sigma,cv_sqdev,h->value(),h->energy(),energy);
+  }
+
+  return energy;
+}
+
+double FixMetadynamics::calc_force(double x)
+{
+  double force = 0.0;
+
+  for (hill_iter h = hills.begin(); h != hills.end(); h++) {
+    if (h->value() == 0.0) continue;
+    force += ( h->weight() * h->value() * (0.5 / square(h->sigma)) *
+        (2.0 * (x - h->center)) );
+  }
+
+  return force;
 }
 
 /* ---------------------------------------------------------------------- */
@@ -245,4 +343,3 @@ double FixMetadynamics::rmsd( double **aaXf, double **aaXm, int N )
   return sqrt(fdim(E0, 2.0 * pPp)/N);
 
 }
-

@@ -16,6 +16,7 @@
 
 #include "atom_kokkos.h"
 #include "update.h"
+#include "math_eigen_impl.h"
 #include "modify.h"
 #include "region.h"
 #include "input.h"
@@ -73,7 +74,7 @@ void FixMetadynamicsKokkos<DeviceType>::post_force(int /*vflag*/)
 {
   atomKK->sync(execution_space, F_MASK | MASK_MASK);
 
-  d_f = atomKK->k_f.view<DeviceType>();
+  d_f = atomKK->k_f.template view<DeviceType>();
   d_mask = atomKK->k_mask.view<DeviceType>();
 
   int nlocal = atom->nlocal;
@@ -94,22 +95,25 @@ void FixMetadynamicsKokkos<DeviceType>::operator()(TagFixMetadynamics, const int
 
 /* ---------------------------------------------------------------------- */
 
-// FIXME: should it be static inline, or inline. do i care...
-
 using std::fdim;
 using std::sqrt;
 
 template<class DeviceType>
 KOKKOS_INLINE_FUNCTION
-double FixMetadynamicsKokkos<DeviceType>::rmsd( t_x_array aaXf, t_x_array aaXm, int N )
+double FixMetadynamicsKokkos<DeviceType>::rmsd()
 {
+
+  typename AT::t_x_array aaXf = atomKK->k_f.template view<DeviceType>();
+  typename AT::t_x_array aaXm;
+  int N = aaXf.extent(0);
+
   // Find the center of mass of each object:
   double aCenter_f[3] = {0.0, 0.0, 0.0};
   double aCenter_m[3] = {0.0, 0.0, 0.0};
   for (int n = 0; n < N; n++)
     for (int d = 0; d < 3; d++) {
-      aCenter_f[d] += aaXf[n][d];
-      aCenter_m[d] += aaXm[n][d];
+      aCenter_f[d] += aaXf(n,d);
+      aCenter_m[d] += aaXm(n,d);
     }
 
   for (int d = 0; d < 3; d++) {
@@ -121,8 +125,8 @@ double FixMetadynamicsKokkos<DeviceType>::rmsd( t_x_array aaXf, t_x_array aaXm, 
   for (int n = 0; n < N; n++)
     for (int d = 0; d < 3; d++) {
       // shift the coordinates so that the new center of mass is at the origin
-      aaXf_shifted[n][d] = aaXf[n][d] - aCenter_f[d];
-      aaXm_shifted[n][d] = aaXm[n][d] - aCenter_m[d];
+      aaXf_shifted[n][d] = aaXf(n,d) - aCenter_f[d];
+      aaXm_shifted[n][d] = aaXm(n,d) - aCenter_m[d];
     }
 
   // Calculate the "M" array from the Diamond paper (equation 16)
