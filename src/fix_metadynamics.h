@@ -22,7 +22,9 @@ FixStyle(metadynamics,FixMetadynamics);
 
 #include "fix.h"
 
+#include <array>
 #include <list>
+#include <vector>
 
 namespace LAMMPS_NS {
 
@@ -35,13 +37,15 @@ class FixMetadynamics : public Fix {
   ~FixMetadynamics() override;
   int setmask() override;
   void setup(int) override;
+  void initial_integrate(int) override;
   void post_force(int) override;
+  void end_of_step() override;
 
   // rmsd
-  int N;
-  double **aaXf_shifted, **aaXm_shifted;
+  bigint count;
+  double **x_group, **aaXf_shifted, **aaXm_shifted;
 
-  double rmsd(double **,double **,int);
+  double rmsd(double **,double **,int,double *);
 
  protected:
 
@@ -49,12 +53,12 @@ class FixMetadynamics : public Fix {
   double lower_boundary, upper_boundary, width;
   double **refPositions;
 
+  std::vector<std::pair<bigint, double>> colvar_history;
+
   // metadynamics
-  double hill_weight;
   int new_hill_freq, output_freq;
-  double *hill_centers;
-
-
+  int *group_index;
+  double hill_weight;
 
   // harmonic walls
   double lower_walls, upper_walls, force_constant;
