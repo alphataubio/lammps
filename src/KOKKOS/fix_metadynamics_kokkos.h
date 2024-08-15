@@ -41,15 +41,22 @@ class FixMetadynamicsKokkos : public FixMetadynamics {
   void init() override;
   void post_force(int) override;
 
+  //KOKKOS_INLINE_FUNCTION
+  //void operator()(TagFixMetadynamics, const int&) const;
+
   KOKKOS_INLINE_FUNCTION
-  void operator()(TagFixMetadynamics, const int&) const;
+  double rmsd(double *);
 
  private:
-  typename AT::t_x_array d_x;
-  typename AT::t_f_array d_f;
-  typename AT::t_int_1d_randomread d_mask;
+  typename AT::t_x_array d_x_group, d_x_group_shifted, d_ref_positions_shifted;
+  //typename AT::t_f_array d_f;
 
-  typename AT::t_float_1d d_hill_centers;
+  typename AT::tdual_tagint_1d k_group_taglist;
+  typename AT::t_tagint_1d_randomread d_group_taglist;
+
+  typename AT::tdual_x_array k_ref_positions;
+  typename AT::t_x_array d_ref_positions;
+
 
   KOKKOS_INLINE_FUNCTION
   double rmsd();

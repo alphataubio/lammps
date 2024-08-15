@@ -36,11 +36,18 @@ class FixMetadynamics : public Fix {
   void end_of_step() override;
   double compute_scalar() override;
 
-  double **x_group, **aaXf_shifted, **aaXm_shifted;
+  double **x_group, **x_group_shifted, **ref_positions_shifted;
 
-  double rmsd(double **,double *);
+  double rmsd(double *);
 
- private:
+ protected:
+
+   tagint *group_taglist;
+
+  // -------- RMSD --------
+
+  bigint group_count;
+  double **ref_positions;
 
   // -------- COLVAR --------
 
@@ -62,14 +69,9 @@ class FixMetadynamics : public Fix {
   // Current force from this colvar
   double colvar_force;
 
-  // -------- RMSD --------
-
-  bigint group_count;
-  double **refPositions;
-
   // -------- HARMONIC UPPER WALL --------
 
-  double upper_wall, force_constant;
+  double upper_wall_force_constant;
 
   // -------- HILLS --------
 
@@ -96,7 +98,6 @@ class FixMetadynamics : public Fix {
   // Hills grid cache *[0] = energy, *[1]=force
   int hills_grid_size;
   double **hills_grid;
-  tagint *group_taglist;
 
   // -------- OUTPUT FILES --------
 

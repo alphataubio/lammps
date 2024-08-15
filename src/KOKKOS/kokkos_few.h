@@ -31,6 +31,9 @@ class Few {
   KOKKOS_INLINE_FUNCTION void operator=(Few<T, n> const& rhs) {
     for (std::size_t i = 0; i < n; ++i) data()[i] = rhs[i];
   }
+  KOKKOS_INLINE_FUNCTION void operator+=(Few<T, n> const& src) {
+    for (std::size_t i = 0; i < n; ++i) data()[i] += src[i];
+  }
   KOKKOS_INLINE_FUNCTION T* data() {
     return reinterpret_cast<T*>(array_);
   }

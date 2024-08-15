@@ -74,6 +74,7 @@ inline void scalar_times3(const double f, double m[3][3]);
 inline void outer3(const double *v1, const double *v2, double ans[3][3]);
 
 void write3(const double mat[3][3]);
+void write4(const double mat[4][4]);
 int mldivide3(const double mat[3][3], const double *vec, double *ans);
 void rotate(double matrix[3][3], int i, int j, int k, int l, double s, double tau);
 void richardson(double *q, double *m, double *w, double *moments, double dtq);

@@ -23,14 +23,28 @@
 namespace MathExtra {
 
 /* ----------------------------------------------------------------------
-   output a matrix
+   output a 3x3 matrix
 ------------------------------------------------------------------------- */
 
 void write3(const double mat[3][3])
 {
   for (unsigned i = 0; i < 3; i++) {
+    printf("[ ");
     for (unsigned j = 0; j < 3; j++) printf("%g ",mat[i][j]);
-    printf("\n");
+    printf(" ]\n");
+  }
+}
+
+/* ----------------------------------------------------------------------
+   output a 4x4 matrix
+------------------------------------------------------------------------- */
+
+void write4(const double mat[4][4])
+{
+  for (unsigned i = 0; i < 4; i++) {
+    printf("[ ");
+    for (unsigned j = 0; j < 4; j++) printf("%g ",mat[i][j]);
+    printf("]\n");
   }
 }
 

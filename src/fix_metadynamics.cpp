@@ -25,19 +25,15 @@
 #include "text_file_reader.h"
 #include "update.h"
 
-
-#include <algorithm>
 #include <cmath>
-//#include <cstring>
 
 #include <iostream>
+
 
 using namespace LAMMPS_NS;
 using namespace FixConst;
 using namespace MathExtra;
 using namespace MathSpecial;
-
-static constexpr int HILLS_DELTA = 16;
 
 /* ---------------------------------------------------------------------- */
 
@@ -82,9 +78,7 @@ FixMetadynamics::FixMetadynamics(LAMMPS *lmp, int narg, char **arg) :
   new_hill_freq = 1000;
   output_freq = 1000;
 
-  //lower_wall = 0.5;
-  upper_wall = 29.5;
-  force_constant = 10.0;
+  upper_wall_force_constant = 2.0;
 
   int iarg = 4;
   while (iarg < narg) {
@@ -110,12 +104,17 @@ FixMetadynamics::FixMetadynamics(LAMMPS *lmp, int narg, char **arg) :
       iarg += 2;
     } else if (strcmp(arg[iarg], "hillWidth") == 0) {
       if (iarg + 2 > narg) utils::missing_cmd_args(FLERR, "fix metadynamics hillWidth", error);
-      hill_width = utils::inumeric(FLERR, arg[iarg + 1], false, lmp);
+      hill_width = utils::numeric(FLERR, arg[iarg + 1], false, lmp);
       //if (nevery <= 0) error->all(FLERR, "Invalid fix addforce every argument: {}", nevery);
       iarg += 2;
     } else if (strcmp(arg[iarg], "newHillFrequency") == 0) {
       if (iarg + 2 > narg) utils::missing_cmd_args(FLERR, "fix metadynamics newHillFrequency", error);
       new_hill_freq = utils::inumeric(FLERR, arg[iarg + 1], false, lmp);
+      //if (nevery <= 0) error->all(FLERR, "Invalid fix addforce every argument: {}", nevery);
+      iarg += 2;
+    } else if (strcmp(arg[iarg], "upperWallForceConstant") == 0) {
+      if (iarg + 2 > narg) utils::missing_cmd_args(FLERR, "fix metadynamics upperWallForceConstant", error);
+      upper_wall_force_constant = utils::numeric(FLERR, arg[iarg + 1], false, lmp);
       //if (nevery <= 0) error->all(FLERR, "Invalid fix addforce every argument: {}", nevery);
       iarg += 2;
     }
@@ -127,9 +126,9 @@ FixMetadynamics::FixMetadynamics(LAMMPS *lmp, int narg, char **arg) :
   memory->create(hills_grid,hills_grid_size,2,"metadynamics:hills_grid");
 
   MathEigen::Alloc2D(group_count, 3, &x_group);
-  MathEigen::Alloc2D(group_count, 3, &aaXf_shifted);
-  MathEigen::Alloc2D(group_count, 3, &aaXm_shifted);
-  memory->create(group_taglist,group_count,"metadynamics:group_index");
+  MathEigen::Alloc2D(group_count, 3, &x_group_shifted);
+  MathEigen::Alloc2D(group_count, 3, &ref_positions_shifted);
+  memory->create(group_taglist,group_count,"metadynamics:group_taglist");
 }
 
 /* ---------------------------------------------------------------------- */
@@ -138,10 +137,10 @@ FixMetadynamics::~FixMetadynamics()
 {
   if (copymode) return;
   MathEigen::Dealloc2D(&x_group);
-  MathEigen::Dealloc2D(&aaXf_shifted);
-  MathEigen::Dealloc2D(&aaXm_shifted);
+  MathEigen::Dealloc2D(&x_group_shifted);
+  MathEigen::Dealloc2D(&ref_positions_shifted);
   memory->destroy(hill_centers);
-  memory->destroy(refPositions);
+  memory->destroy(ref_positions);
   memory->destroy(group_taglist);
   if (comm->me == 0) {
     fclose(fp_traj);
@@ -154,7 +153,8 @@ FixMetadynamics::~FixMetadynamics()
 int FixMetadynamics::setmask()
 {
   int mask = 0;
-  //mask |= INITIAL_INTEGRATE;
+  mask |= INITIAL_INTEGRATE;
+  //mask |= POST_NEIGHBOR;
   mask |= POST_FORCE;
   mask |= END_OF_STEP;
   return mask;
@@ -169,17 +169,26 @@ void FixMetadynamics::init()
       lower_boundary, upper_boundary, width, hill_weight, hill_width, new_hill_freq, output_freq );
 
   memory->create(hill_centers,ceil(update->nsteps / new_hill_freq),"metadynamics:hill_centers");
+
+  int *mask = atom->mask;
+  for( int i=0, j=0 ; i < atom->nlocal ; i++ )
+    if (mask[i] & groupbit) {
+      group_taglist[j] = atom->tag[i];
+      //std::cerr << fmt::format("group_taglist[{}] {}\n", j,group_taglist[j]);
+      j++;
+    }
+
 }
 
 /* ---------------------------------------------------------------------- */
 
 void FixMetadynamics::setup(int vflag)
 {
-
   if (utils::strmatch(update->integrate_style, "^verlet"))
     post_force(vflag);
   else
     error->all(FLERR, "fix metadynamics does not support RESPA.");
+
 }
 
 void FixMetadynamics::initial_integrate(int /*vflag*/)
@@ -187,28 +196,12 @@ void FixMetadynamics::initial_integrate(int /*vflag*/)
   std::cerr << "-------- STEP " << update->ntimestep << " --------\n";
 }
 
-/* ---------------------------------------------------------------------- */
-
 void FixMetadynamics::post_force(int /*vflag*/)
 {
-  double **x = atom->x;
-  double **f = atom->f;
-  int *mask = atom->mask;
-  imageint *image = atom->image;
-  int nlocal = atom->nlocal;
 
-  int j=0;
-
-  for (int i = 0; i < nlocal; i++)
-    if (mask[i] & groupbit) {
-      const tagint k = atom->map(i+1);
-      domain->unmap(x[k],image[k],x_group[j]);
-      group_taglist[j]=k;
-      j++;
-    }
 
   double inverse_quat[4];
-  colvar_value = rmsd(x_group,inverse_quat);
+  colvar_value = rmsd(inverse_quat);
   update_hills();
 
   int grid_index;
@@ -221,27 +214,27 @@ void FixMetadynamics::post_force(int /*vflag*/)
     calc_energy_and_force(colvar_value,colvar_energy,colvar_force);
   }
 
+  double **f = atom->f;
   double drmsddx = (colvar_value>0.0) ? 1.0/(colvar_value*group_count) : 0.0;
-
   double quat[4];
   qconjugate(inverse_quat,quat);
 
-  for( int i=0 ; i<group_count ; i++ ) {
+  for( int n=0 ; n<group_count ; n++ ) {
 
     double grad[3], grad_rot[3];
-    j=group_taglist[i];
-    grad[0] = drmsddx*(x_group[i][0]-refPositions[i][0]);
-    grad[1] = drmsddx*(x_group[i][1]-refPositions[i][1]);
-    grad[2] = drmsddx*(x_group[i][2]-refPositions[i][2]);
+    const int i = atom->map(group_taglist[n]);
+    grad[0] = drmsddx*(x_group[n][0]-ref_positions[n][0]);
+    grad[1] = drmsddx*(x_group[n][1]-ref_positions[n][1]);
+    grad[2] = drmsddx*(x_group[n][2]-ref_positions[n][2]);
 
     // quaternion rotation of vector: c = a*b*conj(a)
     quatrotvec(quat, grad, grad_rot);
 
-    f[j][0] += colvar_force * grad_rot[0];
-    f[j][1] += colvar_force * grad_rot[1];
-    f[j][2] += colvar_force * grad_rot[2];
+    f[i][0] += colvar_force * grad_rot[0];
+    f[i][1] += colvar_force * grad_rot[1];
+    f[i][2] += colvar_force * grad_rot[2];
 
-    //std::cerr << fmt::format(" *** FixMetadynamics x_group[{}] {:.6} {:.6} {:.6} grad {:.6} {:.6} {:.6} f[{}] {:.6} {:.6} {:.6}\n", i,x_group[i][0],x_group[i][1], x_group[i][2],grad[0],grad[1],grad[2], j,f[j][0],f[j][1],f[j][2] );
+    std::cerr << fmt::format(" *** x_group[{}] {:.6} {:.6} {:.6} grad {:.6} {:.6} {:.6} f[{}] {:.6} {:.6} {:.6}\n", n,x_group[n][0],x_group[n][1], x_group[n][2],grad[0],grad[1],grad[2], i,f[i][0],f[i][1],f[i][2] );
 
   }
 
@@ -251,34 +244,10 @@ void FixMetadynamics::post_force(int /*vflag*/)
   //quat_to_mat(inverse_quat,inverse_mat);
   //write3(inverse_mat);
 
-  std::cerr << fmt::format(" *** FixMetadynamics colvar_value {:.6} colvar_energy {:.6} colvar_force {:.15} quat {:.6} {:.6} {:.6} {:.6}\n", colvar_value,colvar_energy,colvar_force, quat[0],quat[1],quat[2],quat[3]);
+  std::cerr << fmt::format(" *** FixMetadynamics colvar_value {:.6} colvar_energy {:.6} colvar_force {:.15} quat {:.6} {:.6} {:.6} {:.6} |quat| {}\n", colvar_value,colvar_energy,colvar_force, quat[0],quat[1],quat[2],quat[3],sqrt(quat[0]*quat[0]+quat[1]*quat[1]+quat[2]*quat[2]+quat[3]*quat[3]));
 
 }
 
-/* ---------------------------------------------------------------------- */
-
-void FixMetadynamics::end_of_step()
-{
-  fmt::print(fp_traj,"{:18} {:6f}\n", update->ntimestep, colvar_value);
-
-  if((update->ntimestep % output_freq == 0)&&(update->ntimestep > update->firststep)) {
-
-    double energy_max = 0.0;
-
-    for( int i=0; i<hills_grid_size ; i++ )
-      if( hills_grid[i][0]>energy_max )
-        energy_max = hills_grid[i][0];
-
-    for( int i=0; i<hills_grid_size ; i++ ) {
-      double v = lower_boundary+((double)i+0.5)*width;
-      fmt::print(fp_pmf,"{:>18} {:>6f} {:6f}\n", update->ntimestep, v, hills_grid[i][0]-energy_max);
-    }
-  }
-}
-
-/* ---------------------------------------------------------------------- */
-
-double FixMetadynamics::compute_scalar() { return colvar_value; }
 
 /* ---------------------------------------------------------------------- */
 
@@ -287,16 +256,23 @@ double FixMetadynamics::compute_scalar() { return colvar_value; }
 using std::fdim;
 using std::sqrt;
 
-double FixMetadynamics::rmsd( double **aaXf, double inverse_quat[4])
+double FixMetadynamics::rmsd( double inverse_quat[4] )
 {
+
   // Find the center-of-geometry of each object:
+  double **x = atom->x;
+  imageint *image = atom->image;
   double aCenter_f[3] = {0.0};
   double aCenter_m[3] = {0.0};
-  for (int n = 0; n < group_count; n++)
+  for (int n = 0; n < group_count; n++) {
+    const int i = atom->map(group_taglist[n]);
+    domain->unmap(x[i],image[i],x_group[n]);
+    std::cerr << fmt::format(" *** BEFORE_CG x_group[{}] {:.6} {:.6} {:.6}\n", n,x_group[n][0],x_group[n][1],x_group[n][2]);
     for (int d = 0; d < 3; d++) {
-      aCenter_f[d] += aaXf[n][d];
-      aCenter_m[d] += refPositions[n][d];
+      aCenter_f[d] += x_group[n][d];
+      aCenter_m[d] += ref_positions[n][d];
     }
+  }
 
   for (int d = 0; d < 3; d++) {
     aCenter_f[d] /= group_count;
@@ -304,31 +280,39 @@ double FixMetadynamics::rmsd( double **aaXf, double inverse_quat[4])
   }
 
   //Subtract the centers-of-geometry from the original coordinates for each object
-  for (int n = 0; n < group_count; n++)
+  for (int n = 0; n < group_count; n++) {
     for (int d = 0; d < 3; d++) {
       // shift the coordinates so that the new center of geometry is at the origin
-      aaXf_shifted[n][d] = aaXf[n][d] - aCenter_f[d];
-      aaXm_shifted[n][d] = refPositions[n][d] - aCenter_m[d];
+      x_group_shifted[n][d] = x_group[n][d] - aCenter_f[d];
+      ref_positions_shifted[n][d] = ref_positions[n][d] - aCenter_m[d];
     }
+        std::cerr << fmt::format(" *** AFTER_CG x_group[{}] {} {} {}\n", n,x_group_shifted[n][0],x_group_shifted[n][1],x_group_shifted[n][2]);
+  }
 
   // Calculate the "M" array from the Diamond paper (equation 16)
-  double M[3][3] = {0.0};
+  double M[3][3];
+  for (int i = 0; i < 3; i++)
+    for (int j = 0; j < 3; j++) M[i][j] = 0.0;
 
-  for (size_t n = 0; n < group_count; n++)
+  for (size_t n = 0; n < group_count; n++) {
     for (int i = 0; i < 3; i++) {
-      for (int j = 0; j < 3; j++) { M[i][j] += aaXm_shifted[n][i] * aaXf_shifted[n][j]; }
+      for (int j = 0; j < 3; j++) { M[i][j] += ref_positions_shifted[n][i] * x_group_shifted[n][j]; }
     }
+  }
+
+  write3(M);
 
   // Calculate Q (equation 17)
   double traceM = 0.0;
   for (int i = 0; i < 3; i++) traceM += M[i][i];
   double Q[3][3];
-  for (int i = 0; i < 3; i++)
+  for (int i = 0; i < 3; i++) {
     for (int j = 0; j < 3; j++) {
       Q[i][j] = M[i][j] + M[j][i];
       if (i == j) Q[i][j] -= 2.0 * traceM;
     }
-
+  }
+  
   // Calculate V (equation 18)
   double V[3];
   V[0] = M[1][2] - M[2][1];
@@ -356,6 +340,9 @@ double FixMetadynamics::rmsd( double **aaXf, double inverse_quat[4])
   P[3][2] = V[2];
   P[3][3] = 0.0;
 
+// The vector "p" contains the optimal rotation (backwards quaternion format)
+  double p[4] = {0.0, 0.0, 0.0, 1.0};
+
   double Evl[4];                 // Store the eigenvalues of P here.
   double *Evc[4];                // Store the eigevectors here. This version has ** format.
   double _Evc[4 * 4];            // Contiguous 1D array for storing contents of "Evc" array
@@ -369,13 +356,15 @@ double FixMetadynamics::rmsd( double **aaXf, double inverse_quat[4])
       "This is usually the result of an ill-defined set of atoms for "
       "rotational alignment (RMSD, rotateReference, etc).\n");
 
-  //  p[i] = Evc[0][i];    //copy eigenvector corresponding to this eigenvalue to p
-
-  double *p = Evc[0];
+  for (int i = 0; i < 4; i++)
+    p[i] = Evc[0][i];    //copy eigenvector corresponding to this eigenvalue to p
 
   // Now normalize p
-  double pnorm = sqrt(p[0]*p[0] + p[1]*p[1] + p[2]*p[2] + p[3]*p[3]);
-  //for (int i = 0; i < 4; i++) p[i] /= pnorm;
+  double pnorm = 0.0;
+  for (int i = 0; i < 4; i++) pnorm += p[i] * p[i];
+  pnorm = sqrt(pnorm);
+  for (int i = 0; i < 4; i++) p[i] /= pnorm;
+
 
   // Note: The "p" variable is not a quaternion in the
   //       conventional sense because its elements
@@ -390,10 +379,10 @@ double FixMetadynamics::rmsd( double **aaXf, double inverse_quat[4])
   // BUT... we actually need the INVERSE ROTATION
   // [alphataubio (2024/08)]
 
-  inverse_quat[0] =  p[3]/pnorm;
-  inverse_quat[1] = -p[0]/pnorm;
-  inverse_quat[2] = -p[1]/pnorm;
-  inverse_quat[3] = -p[2]/pnorm;
+  inverse_quat[0] = p[3];
+  inverse_quat[1] = -p[0];
+  inverse_quat[2] = -p[1];
+  inverse_quat[3] = -p[2];
 
   // Finally compute the RMSD between the two coordinate sets:
   // First compute E0 from equation 24 of the paper
@@ -402,11 +391,13 @@ double FixMetadynamics::rmsd( double **aaXf, double inverse_quat[4])
   for (size_t n = 0; n < group_count; n++) {
     double tmp[3];
     // quaternion rotation of vector: c = a*b*conj(a)
-    quatrotvec(inverse_quat, aaXf_shifted[n], tmp);
+    quatrotvec(inverse_quat, x_group_shifted[n], tmp);
+    std::cerr << fmt::format(" *** AFTER_ROT x_group[{}] {:.6} {:.6} {:.6}\n", n,tmp[0],tmp[1],tmp[2]);
     for (int d = 0; d < 3; d++) {
-      E0 += (square(aaXf_shifted[n][d] - aaXm_shifted[n][d]));
-      aaXf[n][d] = tmp[d]+aCenter_m[d];
+      E0 += (square(x_group_shifted[n][d] - ref_positions_shifted[n][d]));
+      x_group[n][d] = tmp[d]+aCenter_m[d];
     }
+    std::cerr << fmt::format(" *** AFTER_TRANSLATION x_group[{}] {:.6} {:.6} {:.6}\n", n,x_group[n][0],x_group[n][1],x_group[n][2]);
   }
   return sqrt(fdim(E0, 2.0 * Evl[0])/group_count); // Evl[0] = the maximum eigenvalue of P
 }
@@ -487,14 +478,37 @@ double FixMetadynamics::rmsd( double **aaXf, double inverse_quat[4])
 
 
 
+/* ---------------------------------------------------------------------- */
 
+void FixMetadynamics::end_of_step()
+{
+  fmt::print(fp_traj,"{:18} {:6f}\n", update->ntimestep, colvar_value);
+
+  if((update->ntimestep % output_freq == 0)&&(update->ntimestep > update->firststep)) {
+
+    double energy_max = 0.0;
+
+    for( int i=0; i<hills_grid_size ; i++ )
+      if( hills_grid[i][0]>energy_max )
+        energy_max = hills_grid[i][0];
+
+    for( int i=0; i<hills_grid_size ; i++ ) {
+      double v = lower_boundary+((double)i+0.5)*width;
+      fmt::print(fp_pmf,"{:>18} {:>6f} {:6f}\n", update->ntimestep, v, hills_grid[i][0]-energy_max);
+    }
+  }
+}
+
+/* ---------------------------------------------------------------------- */
+
+double FixMetadynamics::compute_scalar() { return colvar_value; }
 
 /* ---------------------------------------------------------------------- */
 
 void FixMetadynamics::read_xyz(char *filename)
 {
 
-  memory->create(refPositions,group_count,3,"metadynamics:refPositions");
+  memory->create(ref_positions,group_count,3,"metadynamics:ref_positions");
   if (comm->me != 0) return;
   FILE *fp = fopen(filename, "r");
 
@@ -513,9 +527,9 @@ void FixMetadynamics::read_xyz(char *filename)
     for( int i=0 ; i<xyz_count ; i++ ) {
       double buffer[4];
       reader.next_dvector(buffer,4);
-      refPositions[i][0] = buffer[1];
-      refPositions[i][1] = buffer[2];
-      refPositions[i][2] = buffer[3];
+      ref_positions[i][0] = buffer[1];
+      ref_positions[i][1] = buffer[2];
+      ref_positions[i][2] = buffer[3];
     }
   } catch (std::exception &e) {
     error->all(FLERR, "FixMetadynamics: error reading xyz file {}: {}", filename, e.what());
@@ -567,6 +581,30 @@ void FixMetadynamics::calc_energy_and_force(double xi, double &energy, double &f
   energy *= hill_weight;
   force *= hill_weight;
 
+  if( xi > upper_boundary ) {
+    force -= upper_wall_force_constant*(xi - upper_boundary)/square(width);
+    std::cerr << fmt::format(" *** xi {:.6} energy {:.6} force {:.6} \n", xi,0.0,
+      upper_wall_force_constant*( xi - upper_boundary)/square(width));
+
+  }
   //std::cerr << fmt::format(" *** calc_energy_and_force xi {:.6} energy {:.6} force {:.6} \n", xi,energy,force);
 
 }
+
+/*
+cvm::real colvarbias_restraint_harmonic_walls::restraint_potential(size_t i) const
+{
+  cvm::real const dist = colvar_distance(i);
+  cvm::real const scale = dist > 0.0 ? upper_wall_k : lower_wall_k;
+  return 0.5 * force_k * scale / (variables(i)->width * variables(i)->width) *
+    dist * dist;
+}
+
+
+colvarvalue const colvarbias_restraint_harmonic_walls::restraint_force(size_t i) const
+{
+  cvm::real const dist = colvar_distance(i);
+  cvm::real const scale = dist > 0.0 ? upper_wall_k : lower_wall_k;
+  return - force_k * scale / (variables(i)->width * variables(i)->width) * dist;
+}
+*/
