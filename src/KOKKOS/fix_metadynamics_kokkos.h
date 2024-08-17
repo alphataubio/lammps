@@ -41,11 +41,14 @@ class FixMetadynamicsKokkos : public FixMetadynamics {
   void init() override;
   void post_force(int) override;
 
-  //KOKKOS_INLINE_FUNCTION
-  //void operator()(TagFixMetadynamics, const int&) const;
-
   KOKKOS_INLINE_FUNCTION
   double rmsd(double *);
+
+  KOKKOS_INLINE_FUNCTION
+  double gpu_q_j(typename AT::t_x_array, typename AT::t_x_array, double*);
+
+  KOKKOS_INLINE_FUNCTION
+  double rmsd_grad_gpu(double*);
 
  private:
   typename AT::t_x_array d_x_group, d_x_group_shifted, d_ref_positions_shifted;
@@ -57,9 +60,6 @@ class FixMetadynamicsKokkos : public FixMetadynamics {
   typename AT::tdual_x_array k_ref_positions;
   typename AT::t_x_array d_ref_positions;
 
-
-  KOKKOS_INLINE_FUNCTION
-  double rmsd();
 };
 
 }

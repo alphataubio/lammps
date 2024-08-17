@@ -199,14 +199,13 @@ void FixMetadynamics::initial_integrate(int /*vflag*/)
 void FixMetadynamics::post_force(int /*vflag*/)
 {
 
-
   double inverse_quat[4];
   colvar_value = rmsd(inverse_quat);
   update_hills();
 
-  int grid_index;
+  int grid_index = (int) floor((colvar_value-lower_boundary)/width);
 
-  if( use_grids && (grid_index=(colvar_value-lower_boundary)/width-0.5)<hills_grid_size ) {
+  if( use_grids && grid_index<hills_grid_size ) {
     colvar_energy = hills_grid[grid_index][0];
     colvar_force = hills_grid[grid_index][1];
     //std::cerr << fmt::format("   *** hills_grid[{}] {} {}\n", grid_index,hills_grid[grid_index][0],hills_grid[grid_index][1] );
@@ -267,7 +266,7 @@ double FixMetadynamics::rmsd( double inverse_quat[4] )
   for (int n = 0; n < group_count; n++) {
     const int i = atom->map(group_taglist[n]);
     domain->unmap(x[i],image[i],x_group[n]);
-    std::cerr << fmt::format(" *** BEFORE_CG x_group[{}] {:.6} {:.6} {:.6}\n", n,x_group[n][0],x_group[n][1],x_group[n][2]);
+    //std::cerr << fmt::format(" *** BEFORE_CG x_group[{}] {:.6} {:.6} {:.6}\n", n,x_group[n][0],x_group[n][1],x_group[n][2]);
     for (int d = 0; d < 3; d++) {
       aCenter_f[d] += x_group[n][d];
       aCenter_m[d] += ref_positions[n][d];
@@ -286,7 +285,7 @@ double FixMetadynamics::rmsd( double inverse_quat[4] )
       x_group_shifted[n][d] = x_group[n][d] - aCenter_f[d];
       ref_positions_shifted[n][d] = ref_positions[n][d] - aCenter_m[d];
     }
-        std::cerr << fmt::format(" *** AFTER_CG x_group[{}] {} {} {}\n", n,x_group_shifted[n][0],x_group_shifted[n][1],x_group_shifted[n][2]);
+        std::cerr << fmt::format(" *** AFTER_CG x_group[{}] {:.6} {:.6} {:.6}\n", n,x_group_shifted[n][0],x_group_shifted[n][1],x_group_shifted[n][2]);
   }
 
   // Calculate the "M" array from the Diamond paper (equation 16)
@@ -349,6 +348,12 @@ double FixMetadynamics::rmsd( double inverse_quat[4] )
   for (int i = 0; i < 4; i++)    // We must make sure that
     Evc[i] = &(_Evc[4 * i]);     // Evc[i] points to the correct location in memory
 
+  for (unsigned i = 0; i < 4; i++) {
+    printf("[ ");
+    for (unsigned j = 0; j < 4; j++) printf("%g ",P[i][j]);
+    printf("]\n");
+  }
+
   int ierror = MathEigen::Jacobi<double, double *, double **>(4).Diagonalize(P, Evl, Evc);
 
   if(ierror)
@@ -392,7 +397,7 @@ double FixMetadynamics::rmsd( double inverse_quat[4] )
     double tmp[3];
     // quaternion rotation of vector: c = a*b*conj(a)
     quatrotvec(inverse_quat, x_group_shifted[n], tmp);
-    std::cerr << fmt::format(" *** AFTER_ROT x_group[{}] {:.6} {:.6} {:.6}\n", n,tmp[0],tmp[1],tmp[2]);
+    std::cerr << fmt::format(" *** AFTER_ROT inverse_quat {:.6} {:.6} {:.6} {:.6} x_group[{}] {:.6} {:.6} {:.6}\n", inverse_quat[0],inverse_quat[1],inverse_quat[2],inverse_quat[3], n,tmp[0],tmp[1],tmp[2]);
     for (int d = 0; d < 3; d++) {
       E0 += (square(x_group_shifted[n][d] - ref_positions_shifted[n][d]));
       x_group[n][d] = tmp[d]+aCenter_m[d];
@@ -590,21 +595,3 @@ void FixMetadynamics::calc_energy_and_force(double xi, double &energy, double &f
   //std::cerr << fmt::format(" *** calc_energy_and_force xi {:.6} energy {:.6} force {:.6} \n", xi,energy,force);
 
 }
-
-/*
-cvm::real colvarbias_restraint_harmonic_walls::restraint_potential(size_t i) const
-{
-  cvm::real const dist = colvar_distance(i);
-  cvm::real const scale = dist > 0.0 ? upper_wall_k : lower_wall_k;
-  return 0.5 * force_k * scale / (variables(i)->width * variables(i)->width) *
-    dist * dist;
-}
-
-
-colvarvalue const colvarbias_restraint_harmonic_walls::restraint_force(size_t i) const
-{
-  cvm::real const dist = colvar_distance(i);
-  cvm::real const scale = dist > 0.0 ? upper_wall_k : lower_wall_k;
-  return - force_k * scale / (variables(i)->width * variables(i)->width) * dist;
-}
-*/
