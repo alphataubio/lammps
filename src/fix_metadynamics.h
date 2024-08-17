@@ -99,6 +99,14 @@ class FixMetadynamics : public Fix {
   int hills_grid_size;
   double **hills_grid;
 
+  // -------- MULTIPLE REPLICAS --------
+  
+  // Frequency at which data the "mirror" biases are updated
+  int replica_update_freq;
+  
+  // MPI comm with 1 root proc from each world
+  MPI_Comm roots;
+  
   // -------- OUTPUT FILES --------
 
   // trajectory and pmf output
@@ -111,6 +119,7 @@ class FixMetadynamics : public Fix {
 
   void read_xyz(char *);
   void update_hills();
+  void update_replicas();
   void calc_energy_and_force(double, double &, double &);
 
 };

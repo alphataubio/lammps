@@ -24,6 +24,7 @@
 #include "memory.h"
 #include "text_file_reader.h"
 #include "update.h"
+#include "universe.h"
 
 #include <cmath>
 
@@ -119,7 +120,19 @@ FixMetadynamics::FixMetadynamics(LAMMPS *lmp, int narg, char **arg) :
       iarg += 2;
     }
   }
+  
+  if( universe->existflag ) {
 
+    replica_update_freq = new_hill_freq*10;
+    
+    // create MPI communicator for root proc from each world
+    int color;
+    if (comm->me == 0) color = 0;
+    else color = 1;
+    MPI_Comm_split(universe->uworld,color,0,&roots);
+  
+  }
+  
   number_hills = 0;
   hill_sigma = width * hill_width / 2.0;
   hills_grid_size = floor(upper_boundary-lower_boundary)/width;
@@ -551,16 +564,28 @@ void FixMetadynamics::update_hills()
     hill_centers[number_hills] = colvar_value;
     number_hills++;
 
-    // FIXME: if there is more than one replica,
-    // communicate it to the others
-
     if (use_grids)
       for( int i=0; i<hills_grid_size ; i++ ) {
         double x = lower_boundary+((double)i+0.5)*width;
         calc_energy_and_force(x,hills_grid[i][0],hills_grid[i][1]);
       //std::cerr << fmt::format(" *** hills_grid[{}] {} {}\n", i,hills_grid[i][0],hills_grid[i][1] );
       }
+
+    // if there is more than one replica, communicate it to the others
+    if( universe->existflag && (update->ntimestep % replica_update_freq == 0) )
+      update_replicas();
+      
   }
+}
+
+/* ---------------------------------------------------------------------- */
+
+void FixMetadynamics::update_replicas()
+{
+  
+  if (comm->me == 0) MPI_Allgather(&temp,1,MPI_DOUBLE,set_temp,1,MPI_DOUBLE,roots);
+  MPI_Bcast(set_temp,nworlds,MPI_DOUBLE,0,world);
+  
 }
 
 /* ---------------------------------------------------------------------- */
