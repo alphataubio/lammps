@@ -23,8 +23,9 @@
 #include "math_special.h"
 #include "memory.h"
 #include "text_file_reader.h"
-#include "update.h"
 #include "universe.h"
+#include "update.h"
+#include "utils.h"
 
 #include <cmath>
 
@@ -166,7 +167,7 @@ FixMetadynamics::~FixMetadynamics()
 int FixMetadynamics::setmask()
 {
   int mask = 0;
-  mask |= INITIAL_INTEGRATE;
+  //mask |= INITIAL_INTEGRATE;
   //mask |= POST_NEIGHBOR;
   mask |= POST_FORCE;
   mask |= END_OF_STEP;
@@ -191,23 +192,25 @@ void FixMetadynamics::init()
       j++;
     }
 
+  utils::merge_sort(group_taglist, group_count, nullptr, idcompare);
+
+}
+
+int FixMetadynamics::idcompare(const int i, const int j, void *ptr)
+{
+  if (i < j) return -1;
+  else if (i > j) return 1;
+  else return 0;
 }
 
 /* ---------------------------------------------------------------------- */
-
-void FixMetadynamics::setup(int vflag)
-{
-  if (utils::strmatch(update->integrate_style, "^verlet"))
-    post_force(vflag);
-  else
-    error->all(FLERR, "fix metadynamics does not support RESPA.");
-
-}
 
 void FixMetadynamics::initial_integrate(int /*vflag*/)
 {
   std::cerr << "-------- STEP " << update->ntimestep << " --------\n";
 }
+
+/* ---------------------------------------------------------------------- */
 
 void FixMetadynamics::post_force(int /*vflag*/)
 {
@@ -256,7 +259,7 @@ void FixMetadynamics::post_force(int /*vflag*/)
   //quat_to_mat(inverse_quat,inverse_mat);
   //write3(inverse_mat);
 
-  std::cerr << fmt::format(" *** FixMetadynamics colvar_value {:.6} colvar_energy {:.6} colvar_force {:.15} quat {:.6} {:.6} {:.6} {:.6} |quat| {}\n", colvar_value,colvar_energy,colvar_force, quat[0],quat[1],quat[2],quat[3],sqrt(quat[0]*quat[0]+quat[1]*quat[1]+quat[2]*quat[2]+quat[3]*quat[3]));
+  std::cerr << fmt::format(" *** FixMetadynamics colvar_value {:.6} colvar_energy {:.6} colvar_force {:.15} quat {:.6} {:.6} {:.6} {:.6}\n", colvar_value,colvar_energy,colvar_force, quat[0],quat[1],quat[2],quat[3]);
 
 }
 
@@ -298,7 +301,7 @@ double FixMetadynamics::rmsd( double inverse_quat[4] )
       x_group_shifted[n][d] = x_group[n][d] - aCenter_f[d];
       ref_positions_shifted[n][d] = ref_positions[n][d] - aCenter_m[d];
     }
-        std::cerr << fmt::format(" *** AFTER_CG x_group[{}] {:.6} {:.6} {:.6}\n", n,x_group_shifted[n][0],x_group_shifted[n][1],x_group_shifted[n][2]);
+        //std::cerr << fmt::format(" *** AFTER_CG x_group[{}] {:.6} {:.6} {:.6}\n", n,x_group_shifted[n][0],x_group_shifted[n][1],x_group_shifted[n][2]);
   }
 
   // Calculate the "M" array from the Diamond paper (equation 16)
@@ -312,7 +315,7 @@ double FixMetadynamics::rmsd( double inverse_quat[4] )
     }
   }
 
-  write3(M);
+  //write3(M);
 
   // Calculate Q (equation 17)
   double traceM = 0.0;
@@ -361,12 +364,6 @@ double FixMetadynamics::rmsd( double inverse_quat[4] )
   for (int i = 0; i < 4; i++)    // We must make sure that
     Evc[i] = &(_Evc[4 * i]);     // Evc[i] points to the correct location in memory
 
-  for (unsigned i = 0; i < 4; i++) {
-    printf("[ ");
-    for (unsigned j = 0; j < 4; j++) printf("%g ",P[i][j]);
-    printf("]\n");
-  }
-
   int ierror = MathEigen::Jacobi<double, double *, double **>(4).Diagonalize(P, Evl, Evc);
 
   if(ierror)
@@ -410,12 +407,12 @@ double FixMetadynamics::rmsd( double inverse_quat[4] )
     double tmp[3];
     // quaternion rotation of vector: c = a*b*conj(a)
     quatrotvec(inverse_quat, x_group_shifted[n], tmp);
-    std::cerr << fmt::format(" *** AFTER_ROT inverse_quat {:.6} {:.6} {:.6} {:.6} x_group[{}] {:.6} {:.6} {:.6}\n", inverse_quat[0],inverse_quat[1],inverse_quat[2],inverse_quat[3], n,tmp[0],tmp[1],tmp[2]);
+    //std::cerr << fmt::format(" *** AFTER_ROT inverse_quat {:.6} {:.6} {:.6} {:.6} x_group[{}] {:.6} {:.6} {:.6}\n", inverse_quat[0],inverse_quat[1],inverse_quat[2],inverse_quat[3], n,tmp[0],tmp[1],tmp[2]);
     for (int d = 0; d < 3; d++) {
       E0 += (square(x_group_shifted[n][d] - ref_positions_shifted[n][d]));
       x_group[n][d] = tmp[d]+aCenter_m[d];
     }
-    std::cerr << fmt::format(" *** AFTER_TRANSLATION x_group[{}] {:.6} {:.6} {:.6}\n", n,x_group[n][0],x_group[n][1],x_group[n][2]);
+    //std::cerr << fmt::format(" *** AFTER_TRANSLATION x_group[{}] {:.6} {:.6} {:.6}\n", n,x_group[n][0],x_group[n][1],x_group[n][2]);
   }
   return sqrt(fdim(E0, 2.0 * Evl[0])/group_count); // Evl[0] = the maximum eigenvalue of P
 }
@@ -583,8 +580,8 @@ void FixMetadynamics::update_hills()
 void FixMetadynamics::update_replicas()
 {
   
-  if (comm->me == 0) MPI_Allgather(&temp,1,MPI_DOUBLE,set_temp,1,MPI_DOUBLE,roots);
-  MPI_Bcast(set_temp,nworlds,MPI_DOUBLE,0,world);
+  //if (comm->me == 0) MPI_Allgather(&temp,1,MPI_DOUBLE,set_temp,1,MPI_DOUBLE,roots);
+  //MPI_Bcast(set_temp,nworlds,MPI_DOUBLE,0,world);
   
 }
 

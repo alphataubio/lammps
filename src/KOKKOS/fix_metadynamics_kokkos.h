@@ -51,8 +51,7 @@ class FixMetadynamicsKokkos : public FixMetadynamics {
   double rmsd_grad_gpu(double*);
 
  private:
-  typename AT::t_x_array d_x_group, d_x_group_shifted, d_ref_positions_shifted;
-  //typename AT::t_f_array d_f;
+  typename AT::t_x_array d_x_group;
 
   typename AT::tdual_tagint_1d k_group_taglist;
   typename AT::t_tagint_1d_randomread d_group_taglist;

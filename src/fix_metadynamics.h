@@ -30,7 +30,6 @@ class FixMetadynamics : public Fix {
   ~FixMetadynamics() override;
   int setmask() override;
   void init() override;
-  void setup(int) override;
   void initial_integrate(int) override;
   void post_force(int) override;
   void end_of_step() override;
@@ -42,7 +41,9 @@ class FixMetadynamics : public Fix {
 
  protected:
 
-   tagint *group_taglist;
+  tagint *group_taglist;
+
+  static int idcompare(const int, const int, void *);
 
   // -------- RMSD --------
 
