@@ -55,7 +55,7 @@ class FixBondReact : public Fix {
   double compute_vector(int) override;
   double memory_usage() override;
 
- private:
+ protected:
   int newton_bond;
   int nreacts;
   int *nevery;
