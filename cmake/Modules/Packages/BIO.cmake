@@ -11,6 +11,13 @@ if(NOT libsbml_FOUND)
   mark_as_advanced(WITH_CPP_NAMESPACE)
   mark_as_advanced(WITH_SWIG)
 
+  set(_STABLE_PACKGES "comp;distrib;fbc;groups;layout;multi;qual;render")
+  foreach(package ${_STABLE_PACKGES})
+    string(TOUPPER ${package} package_upper)
+    string(CONCAT package_option "ENABLE_" ${package_upper})
+    set(${package_option} ON CACHE BOOL "Enable package" FORCE)
+  endforeach()
+
   # download and build a local copy of libyaml
   include(ExternalCMakeProject)
   ExternalCMakeProject(libsbml ${libsbml_URL} ${libsbml_MD5} libsbml . "")
