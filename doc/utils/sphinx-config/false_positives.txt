@@ -141,6 +141,7 @@ arg
 arge
 args
 argv
+Armv
 arrhenius
 Arun
 arXiv
@@ -215,7 +216,6 @@ ba
 Babadi
 Babaei
 backcolor
-backends
 Baczewski
 Bagchi
 Bagi
@@ -639,6 +639,7 @@ cstyle
 csvr
 ctest
 ctilde
+ctip
 ctrl
 ctrn
 ctypes
@@ -1539,6 +1540,7 @@ idx
 ie
 ielement
 ieni
+ifdef
 ifdefs
 iff
 ifort
@@ -2725,6 +2727,7 @@ OMP
 oneAPI
 onebody
 onelevel
+oneMKL
 oneway
 onlysalt
 ons
@@ -3662,6 +3665,7 @@ Tanmoy
 Tartakovsky
 taskset
 taubi
+Tavenner
 taylor
 tb
 tchain
