@@ -122,11 +122,11 @@ void Write_Force_Field(const char *filename, reax_interaction *reax,
     //fmt::print(fp, "{:10.4f} !1: electron correction on valence angle
 
     // next line is number of atom types followed by 3 lines of comments
-    const int ntypes = reax->num_atom_types;
+    const int n_atm = reax->num_atom_types;
     fmt::print(fp, "{:<4}   ! Nr of atoms; cov.r; valency;a.m;Rvdw;Evdw;gammaEEM;cov.r2;#\n"
                    "         alfa;gammavdW;valency;Eunder;Eover;chiEEM;etaEEM;n.u.\n"
                    "         cov r3;Elp;Heat inc.;bo131;bo132;bo133;softcut;n.u.\n"
-                   "         ov/un;val1;n.u.;val3,vval4\n", ntypes);
+                   "         ov/un;val1;n.u.;val3,vval4\n", n_atm);
 
     // ffield data
     auto &sbp = reax->sbp;
@@ -143,7 +143,7 @@ void Write_Force_Field(const char *filename, reax_interaction *reax,
 
     const int lgflag = control->lgflag;
 
-     for (i = 0; i < ntypes; ++i) {
+    for (i = 0; i < n_atm; ++i) {
 
       // line one
 
@@ -184,19 +184,18 @@ void Write_Force_Field(const char *filename, reax_interaction *reax,
 
     // next line is number of two body parameters followed by 1 comment line
 
-    int nbondtypes = 0;
-    for (j = 0; j < ntypes; ++j)
+    int n_bnd = 0;
+    for (j = 0; j < n_atm; ++j)
       for (k = 0; k <= j; ++k)
         if ( tbp[j][k].p_bo2 > 0.0 || tbp[j][k].p_bo4 > 0.0 || tbp[j][k].p_bo6 > 0.0 )
-          nbondtypes++;
+          n_bnd++;
 
     fmt::print(fp, " {:<3}   ! Nr of bonds; Edis1;LPpen;n.u.;pbe1;pbo5;13corr;pbo6\n"
-                   "                          pbe2;pbo3;pbo4;n.u.;pbo1;pbo2;ovcorr\n", nbondtypes);
+                   "                          pbe2;pbo3;pbo4;n.u.;pbo1;pbo2;ovcorr\n", n_bnd);
 
-    for (j = 0; j < ntypes; ++j)
+    for (j = 0; j < n_atm; ++j)
       for (k = 0; k <= j; ++k)
-        if ( tbp[j][k].p_bo2 > 0.0 || tbp[j][k].p_bo4 > 0.0 || tbp[j][k].p_bo6 > 0.0 )
-        {
+        if ( tbp[j][k].p_bo2 > 0.0 || tbp[j][k].p_bo4 > 0.0 || tbp[j][k].p_bo6 > 0.0 ) {
 
           // first line
 
@@ -206,59 +205,51 @@ void Write_Force_Field(const char *filename, reax_interaction *reax,
 
           fmt::print(fp, "        {:8.4f} {:8.4f} {:8.4f} {:8.4f} {:8.4f} {:8.4f} {:8.4f} {:8.4f}\n", tbp[k][j].p_be2, tbp[k][j].p_bo3, tbp[k][j].p_bo4, 0.0, tbp[k][j].p_bo1, tbp[k][j].p_bo2, tbp[k][j].ovc, 0.0 );
 
-    }
-
-/*
-        // next line is number of two body off-diagonal parameters
-
-        values = reader.next_values(0);
-        n = values.next_int();
-        ++lineno;
-
-        double val;
-        for (i = 0; i < n; ++i) {
-          values = reader.next_values(0);
-          ++lineno;
-          CHECK_COLUMNS(8 + lgflag);
-
-          j = values.next_int() - 1;
-          k = values.next_int() - 1;
-
-          if ((j < 0) || (k < 0))
-            THROW_ERROR("Inconsistent force field file");
-
-          if ((j < ntypes) && (k < ntypes)) {
-            val = values.next_double();
-            if (val > 0.0) tbp[j][k].D = tbp[k][j].D = val;
-
-            val = values.next_double();
-            if (val > 0.0) tbp[j][k].r_vdW = tbp[k][j].r_vdW = 2*val;
-
-            val = values.next_double();
-            if (val > 0.0) tbp[j][k].alpha = tbp[k][j].alpha = val;
-
-            val = values.next_double();
-            if (val > 0.0) tbp[j][k].r_s = tbp[k][j].r_s = val;
-
-            val = values.next_double();
-            if (val > 0.0) tbp[j][k].r_p = tbp[k][j].r_p = val;
-
-            val = values.next_double();
-            if (val > 0.0) tbp[j][k].r_pp = tbp[k][j].r_pp = val;
-
-            if (lgflag) {
-              val = values.next_double();
-              if (val >= 0.0) tbp[j][k].lgcij = tbp[k][j].lgcij = val;
-            }
-          }
         }
 
-        // next line is number of three body parameters
+    // next line is number of two body off-diagonal parameters
 
-        values = reader.next_values(0);
-        n = values.next_int();
-        ++lineno;
+    int n_ofd = 1;
+    fmt::print(fp, " {:<3}   ! Nr of off-diagonal terms; Ediss;Ro;gamma;rsigma;rpi;rpi2\n", n_ofd);
 
+    for (j = 0; j < n_atm; ++j)
+      for (k = 0; k < j; ++k) {
+
+          fmt::print(fp, " {:2}  {:2} {:8.4f} {:8.4f} {:8.4f} {:8.4f} {:8.4f} {:8.4f}", k+1, j+1, tbp[k][j].D, tbp[k][j].r_vdW/2.0, tbp[k][j].alpha, tbp[k][j].r_s, tbp[k][j].r_p, tbp[k][j].r_pp );
+
+          if (lgflag) {
+            // FIXME
+            //if (val >= 0.0) tbp[j][k].lgcij = tbp[k][j].lgcij = val;
+            fmt::print(fp, " {:8.4f}", tbp[k][j].lgcij );
+          }
+
+          fmt::print(fp, "\n");
+
+      }
+
+    // next line is number of three body parameters
+
+    int n_ang = 0;
+    for (j = 0; j < n_atm; ++j)
+      for (k = 0; k < n_atm; ++k)
+        for (l = 0; l < n_atm; ++l)
+            n_ang += thbp[j][k][l].cnt;
+
+    fmt::print(fp, " {:<3}   ! Nr of angles;at1;at2;at3;Thetao,o;ka;kb;pv1;pv2\n", n_ang);
+
+    for (j = 0; j < n_atm; ++j)
+      for (k = 0; k < n_atm; ++k)
+        for (l = 0; l < n_atm; ++l)
+          for (m = 0; m < thbp[j][k][l].cnt; ++m)
+            if( fabs(thbp[j][k][l].prm[m].p_val1) > 0.001 ){
+
+              fmt::print(fp, " {:2} {:2} {:2} {} {:8.4f} {:8.4f} {:8.4f} {:8.4f} {:8.4f} {:8.4f}\n", l+1, k+1, j+1, m, thbp[j][k][l].prm[m].theta_00, thbp[j][k][l].prm[m].p_val1, thbp[j][k][l].prm[m].p_val2, thbp[j][k][l].prm[m].p_coa1, thbp[j][k][l].prm[m].p_val7, thbp[j][k][l].prm[m].p_pen1, thbp[j][k][l].prm[m].p_val4 );
+
+            }
+
+
+
+/*
         int cnt;
         for (i = 0; i < n; ++i) {
           values = reader.next_values(0);
@@ -307,9 +298,23 @@ void Write_Force_Field(const char *filename, reax_interaction *reax,
             thbp[l][k][j].prm[cnt].p_val4 = val;
           }
         }
+*/
 
-        // next line is number of four body parameters
+    // next line is number of four body parameters
 
+    int n_tor = 54;
+    fmt::print(fp, " {:<3}   ! Nr of torsions;at1;at2;at3;at4;;V1;V2;V3;V2(BO);vconj;n.u;n\n", n_tor);
+
+    for (j = 0; j < n_atm; ++j)
+      for (k = 0; k < n_atm; ++k)
+        for (l = 0; l < n_atm; ++l)
+          for (m = 0; m < n_atm; ++m) {
+
+            fmt::print(fp, " {:2} {:2} {:2} {:2} {:8.4f} {:8.4f} {:8.4f} {:8.4f} {:8.4f} 0.0000   0.0000\n", m+1, l+1, k+1, j+1, fbp[j][k][l][m].prm[0].V1, fbp[j][k][l][m].prm[0].V2, fbp[j][k][l][m].prm[0].V3, fbp[j][k][l][m].prm[0].p_tor1, fbp[j][k][l][m].prm[0].p_cot1 );
+
+          }
+
+/*
         values = reader.next_values(0);
         n = values.next_int();
         ++lineno;
@@ -377,6 +382,7 @@ void Write_Force_Field(const char *filename, reax_interaction *reax,
         }
 
         // next line is number of hydrogen bond parameters. that block may be missing
+  1    ! Nr of hydrogen bonds;at1;at2;at3;Rhb;Dehb;vhb1
 
         for (i = 0; i < ntypes; ++i)
           for (j = 0; j < ntypes; ++j)
