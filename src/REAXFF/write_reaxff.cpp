@@ -11,18 +11,19 @@
    See the README file in the top-level LAMMPS directory.
 ------------------------------------------------------------------------- */
 
+/* ----------------------------------------------------------------------
+   Contributing author: Mitch Murphy (alphataubio at gmail)
+------------------------------------------------------------------------- */
+
 #include "write_reaxff.h"
 
+#include "error.h"
+#include "force.h"
 #include "pair.h"
-
-#include <cctype>
-#include <cstring>
+#include "pair_reaxff.h"
+#include "reaxff_api.h"
 
 using namespace LAMMPS_NS;
-
-enum { REGULAR_MODE, CLASS2_MODE };
-
-static constexpr int BUF_SIZE = 256;
 
 /* ----------------------------------------------------------------------
    called as write_coeff command in input script
@@ -40,7 +41,9 @@ void WriteReaxff::command(int narg, char **arg)
   // initialize relevant styles
   lmp->init();
 
-  if (comm->me == 0)
-    Write_Force_Field(arg[0], &(api->system->reax_param), api->control, world);
+  if (comm->me == 0) {
+    PairReaxFF *reaxff = dynamic_cast<PairReaxFF *>(force->pair_match("^reax..", 0, 0));
+    Write_Force_Field(arg[0], &(reaxff->api->system->reax_param), reaxff->api->control);
+  }
 
 }
