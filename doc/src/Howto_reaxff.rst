@@ -1,48 +1,36 @@
 Reactive Force Field (ReaxFF)
 =============================
 
-The Reactive Force Field (ReaxFF) replaces fixed bond topologies of classical force fields with the concept of bond order to simulate bond breaking/formation of chemical reactions\cite{Duin2001}. Originally conceived for hydrocarbons in the gas phase, ReaxFF has been extended to a wide range of applications\cite{Senftle2016}, including solvated proteins \cite{monti2013,monti2016simulation,Zhang2018}. ReaxFF in LAMMPS\cite{chenoweth2008,aktulga2012} supports both the QEq charge equilibration\cite{rappe1991,nakano1997} and atom-condensed Kohn-Sham DFT to second order (ACKS2)\cite{verstraelen2013,ohearn2020} methods to represent the dynamics of electron density while fixed partial charges in CHARMM do not.
+.. The Reactive Force Field (ReaxFF) replaces fixed bond topologies of classical force fields with the concept of bond order to simulate bond breaking/formation of chemical reactions\cite{Duin2001}. Originally conceived for hydrocarbons in the gas phase, ReaxFF has been extended to a wide range of applications\cite{Senftle2016}, including solvated proteins \cite{monti2013,monti2016simulation,Zhang2018}. ReaxFF in LAMMPS\cite{chenoweth2008,aktulga2012} supports both the QEq charge equilibration\cite{rappe1991,nakano1997} and atom-condensed Kohn-Sham DFT to second order (ACKS2)\cite{verstraelen2013,ohearn2020} methods to represent the dynamics of electron density while fixed partial charges in CHARMM do not.
 
 
 .. `charmm-gui.org <https://charmm-gui.org/>`_.
 
 .. image:: https://media.springernature.com/full/springer-static/image/art%3A10.1038%2Fnpjcompumats.2015.11/MediaObjects/41524_2016_Article_BFnpjcompumats201511_Fig2_HTML.jpg
-         :align: center
-
+  :align: center
+  :width: 62%
 
 
 .. The `CHARMM force field <https://mackerell.umaryland.edu/charmm_ff.shtml>`_ :ref:`(MacKerell) <howto-MacKerell>` and `AMBER force field
 <https://ambermd.org/AmberModels.php>`_ :ref:`(Cornell) <howto-Cornell>` have potential energy function of the form
 
+ReaxFF Potential Functions
+
 .. math::
 
-  V & = \sum_{bonds} E_b + \sum_{angles} \!E_a + \!\overbrace{\sum_{dihedral} \!\!E_d}^{\substack{
-         \text{charmm} \\
-        \text{charmmfsw}
-      }} +\!\!\! \sum_{impropers} \!\!\!E_i \\[.6em]
-      & \quad + \!\!\!\!\!\!\!\!\!\!\underbrace{~\sum_{pairs} \left(E_{LJ}+E_{coul}\right)}_{\substack{
-         \text{lj/charmm/coul/charmm} \\
-        \text{lj/charmm/coul/charmm/implicit} \\
-        \text{lj/charmm/coul/long} \\
-        \text{lj/charmm/coul/msm} \\
-         \text{lj/charmmfsw/coul/charmmfsh} \\
-        \text{lj/charmmfsw/coul/long}
-      }} \!\!\!\!\!\!\!\!+ \!\!\sum_{special}\! E_s + \!\!\!\!\sum_{residues} \!\!\!{\scriptstyle\mathrm{CMAP}(\phi,\psi)}
+  E_{system} & = E_{bond} + E_{lp} + E_{over} + E_{under} + E_{val} + E_{pen} + E_{coa} + E_{C2}\\[.6em]
+  & \qquad + E_{triple} + E_{tors} + E_{conj} + E_{H-bond} + E_{vdWaals} + E_{Coulomb}
 
 
 
+* :doc:`pair_style <pair_reaxff>` reaxff (/kk)
+* :doc:`fix <fix_qeq_reaxff>` qeq/reaxff (/kk)
+* :doc:`fix <fix_acks2_reaxff>` acks2/reaxff (/kk)
+* :doc:`fix <fix_qtpie_reaxff>` qtpie/reaxff (/kk)
+* :doc:`pair_style <fix_reaxff_bonds>` reaxff/bonds (/kk)
+* :doc:`pair_style <fix_reaxff_species>` reaxff/species (/kk)
+* :doc:`compute <compute_reaxff_atom>` reaxff/atom (/kk)
 
-* :doc:`bond_style <bond_harmonic>` harmonic
-* :doc:`angle_style <angle_charmm>` charmm
-* :doc:`dihedral_style <dihedral_charmm>` charmmfsh
-* :doc:`dihedral_style <dihedral_charmm>` charmm
-* :doc:`pair_style <pair_charmm>` lj/charmmfsw/coul/charmmfsh
-* :doc:`pair_style <pair_charmm>` lj/charmmfsw/coul/long
-* :doc:`pair_style <pair_charmm>` lj/charmm/coul/charmm
-* :doc:`pair_style <pair_charmm>` lj/charmm/coul/charmm/implicit
-* :doc:`pair_style <pair_charmm>` lj/charmm/coul/long
-* :doc:`special_bonds <special_bonds>` charmm
-* :doc:`special_bonds <special_bonds>` amber
 
 .. note::
 
@@ -60,6 +48,21 @@ The Reactive Force Field (ReaxFF) replaces fixed bond topologies of classical fo
 ReaxFF Force Fields
 -------------------
 
+.. list-table:: Available force fields in LAMMPS
+   :widths: 10 10 10 70
+   :header-rows: 1
+   :align: center
+
+   * - Branch
+     - Elements
+     - Filename
+     - Source
+   * - combustion
+     - C / H
+     - n/a
+     -
+
+
 
 
 FitSNAP-ReaxFF
@@ -67,8 +70,46 @@ FitSNAP-ReaxFF
 
 If a parameter set is not available for your intented application, then you can fit a new parameter set with `FitSNAP <https://fitsnap.github.io/>`_ from DFT training data.
 
+.. table:: Parameters that can be optimized
+  :widths: auto
+  :align: center
+
+  ===== ========= ====================================
+  Block Parameter Description
+  ===== ========= ====================================
+  ATM   r_s       Sigma bond covalent radius
+  ATM   r_pi      Pi bond covalent radius
+  ATM   r_pi2     Double pi bond covalent radius
+  BND   p_bo1     Sigma bond order
+  BND   p_bo2     Sigma bond order
+  BND   p_bo3     Pi bond order parameter
+  BND   p_bo4     Pi bond order parameter
+  BND   p_bo5     Double pi bond order parameter
+  BND   p_bo6     Double pi bond order parameter
+  BND   p_be1     Bond energy parameter
+  BND   p_be2     Bond energy parameter
+  BND   De_s      Sigma-bond dissociation energy
+  BND   De_p      Pi-bond dissociation energy
+  BND   De_pp     Double pi-bond dissociation energy
+  BND   p_ovun1   Overcoordination penalty
+  OFD   r_s       Sigma bond length
+  OFD   r_pi      Pi bond length
+  OFD   r_pi2     PiPi bond length
+  ANG   theta_00  180o-(equilibrium angle)
+  ANG   p_val1    Valence angle parameter
+  ANG   p_val2    Valence angle parameter
+  TOR   V1        V1-torsion barrier
+  TOR   V2        V2-torsion barrier
+  TOR   V3        V3-torsion barrier
+  TOR   p_tor1    Torsion angle parameter
+  HBD   r0_hb     Hydrogen bond equilibrium distance
+  HBD   p_hb1     Hydrogen bond energy
+  ===== ========= ====================================
 
 
 
-----------
+
+.. ----------
+
+quux
 

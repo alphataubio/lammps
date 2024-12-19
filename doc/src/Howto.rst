@@ -65,6 +65,7 @@ Force fields howto
    :name: force_howto
    :maxdepth: 1
 
+   Howto_reaxff
    Howto_bioFF
    Howto_amoeba
    Howto_tip3p
