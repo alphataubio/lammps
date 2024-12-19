@@ -64,6 +64,8 @@ extern void Read_Control_File(const char *, control_params *);
 
 extern void Read_Force_Field(const char *, reax_interaction *, control_params *, MPI_Comm);
 
+extern void Write_Force_Field(const char *, reax_interaction *, control_params *);
+
 // forces
 
 extern void Compute_Forces(reax_system *, control_params *, simulation_data *, storage *,
