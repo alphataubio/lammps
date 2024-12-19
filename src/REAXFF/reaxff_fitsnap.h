@@ -15,7 +15,6 @@
 
 namespace ReaxFF {
 
-void Write_Force_Field(const char *filename, reax_interaction *reax,
-                        control_params *control, MPI_Comm world);
+
 
 }
