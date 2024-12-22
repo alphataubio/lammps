@@ -2156,16 +2156,6 @@ int lammps_map_atom(void *handle, const void *id)
 
 /* ---------------------------------------------------------------------- */
 
-void lammps_pair_coeff_reaxff(void *handle, int nargs, char **args) {
-
-
-
-}
-
-
-
-/* ---------------------------------------------------------------------- */
-
 /** Get data type of a LAMMPS per-atom property
  *
 \verbatim embed:rst
