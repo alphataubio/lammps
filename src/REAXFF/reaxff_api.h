@@ -63,10 +63,7 @@ extern void Read_Control_File(const char *, control_params *);
 
 // ffield
 
-//extern void Read_Force_Field(const char *, reax_interaction *, control_params *, MPI_Comm);
 extern void Read_Force_Field(const char *, FILE *, reax_interaction *, control_params *, MPI_Comm);
-
-extern void Write_Force_Field(const char *, reax_interaction *, control_params *);
 
 // forces
 
