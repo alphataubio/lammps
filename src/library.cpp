@@ -57,6 +57,9 @@
 #include "variable.h"
 #include "version.h"
 
+// FIXME: how to handle when REAXFF package not included ?
+#include "pair_reaxff.h"
+
 #include <cstring>
 
 #if defined(LMP_PYTHON)
@@ -758,6 +761,34 @@ void lammps_commands_string(void *handle, const char *str)
         lmp->input->one(cmd);
       }
     }
+  }
+  END_CAPTURE
+}
+
+/* ---------------------------------------------------------------------- */
+
+/** Read ReaxFF force field.
+ *
+\verbatim embed:rst
+
+This function reads ReaxFF force field as string instead of from a file.
+
+\endverbatim
+ *
+ * \param  handle  pointer to a previously created LAMMPS instance
+ * \param  nargs    number of strings in *args*
+ * \param  args    list of arguments as strings
+ * \param  ff     ReaxFF force field as string */
+
+void lammps_pair_coeff_reaxff(void *handle, int nargs, char **args, char *ff)
+{
+
+  auto lmp = (LAMMPS *) handle;
+
+  BEGIN_CAPTURE
+  {
+    PairReaxFF *reaxff = static_cast<PairReaxFF *>(lmp->force->pair);
+    reaxff->coeff_string(nargs, args, ff);
   }
   END_CAPTURE
 }
@@ -2122,6 +2153,16 @@ int lammps_map_atom(void *handle, const void *id)
   else
     return -1;
 }
+
+/* ---------------------------------------------------------------------- */
+
+void lammps_pair_coeff_reaxff(void *handle, int nargs, char **args) {
+
+
+
+}
+
+
 
 /* ---------------------------------------------------------------------- */
 

@@ -47,6 +47,7 @@ class PairReaxFF : public Pair {
   void compute(int, int) override;
   void settings(int, char **) override;
   void coeff(int, char **) override;
+  void coeff_string(int, char **, char *);
   void init_style() override;
   double init_one(int, int) override;
   void *extract(const char *, int &) override;
@@ -79,6 +80,8 @@ class PairReaxFF : public Pair {
   int estimate_reax_lists();
   int write_reax_lists();
   void read_reax_forces(int);
+
+  void coeff_fp(int, char **, FILE *);
 
   int nmax;
   void FindBond();

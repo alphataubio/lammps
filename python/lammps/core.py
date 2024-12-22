@@ -720,6 +720,32 @@ class lammps(object):
 
   # -------------------------------------------------------------------------
 
+  def pair_coeff_reaxff(self,ff,elements):
+    """Read ReaxFF force field as string instead of from a file.
+
+    This is a wrapper around the
+    :cpp:func:`lammps_pair_coeff_reaxff` function of
+    the C-library interface.
+
+    :param ff: a ReaxFF force field as a string
+    :type ff:  string
+    :param elements: list of elements
+    :type elements:  list of strings
+    """
+    cmds =  [s.encode() for s in ['*','*','FitSNAP-ReaxFF']+elements]
+    narg = len(elements)+3
+    print("cmds=", cmds)
+    args = (c_char_p * narg)(*cmds)
+    self.lib.lammps_pair_coeff_reaxff.argtypes = [c_void_p, c_int, c_char_p * narg, c_char_p]
+    self.lib.lammps_pair_coeff_reaxff.restype = None
+
+    with ExceptionCheck(self):
+      self.lib.lammps_pair_coeff_reaxff(self.lmp,narg,args,ff.encode())
+
+    #void lammps_pair_coeff_reaxff(void *handle, int nargs, const char **args);
+
+  # -------------------------------------------------------------------------
+
   def get_natoms(self):
     """Get the total number of atoms in the LAMMPS instance.
 

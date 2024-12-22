@@ -145,6 +145,8 @@ char *lammps_command(void *handle, const char *cmd);
 void lammps_commands_list(void *handle, int ncmd, const char **cmds);
 void lammps_commands_string(void *handle, const char *str);
 
+void lammps_pair_coeff_reaxff(void *handle, int nargs, char **args, char *ff);
+
 /* -----------------------------------------------------------------------
  * Library functions to extract info from LAMMPS or set data in LAMMPS
  * ----------------------------------------------------------------------- */
