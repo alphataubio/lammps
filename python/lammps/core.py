@@ -734,7 +734,6 @@ class lammps(object):
     """
     cmds =  [s.encode() for s in ['*','*','FitSNAP-ReaxFF']+elements]
     narg = len(elements)+3
-    print("cmds=", cmds)
     args = (c_char_p * narg)(*cmds)
     self.lib.lammps_pair_coeff_reaxff.argtypes = [c_void_p, c_int, c_char_p * narg, c_char_p]
     self.lib.lammps_pair_coeff_reaxff.restype = None
