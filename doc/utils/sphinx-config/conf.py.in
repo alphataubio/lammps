@@ -57,8 +57,11 @@ extensions = [
     'table_from_list',
     'tab_or_note',
     'breathe',
-    'sphinx_design'
+    'sphinx_design',
+    'sphinxcontrib.bibtex'
 ]
+
+bibtex_bibfiles = ['lammps.bib']
 
 images_config = {
   'default_image_width' : '25%',
