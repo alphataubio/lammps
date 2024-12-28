@@ -3,9 +3,6 @@ Reactive Force Field (ReaxFF)
 
 The *Reactive Force Field (ReaxFF)* replaces fixed bond topologies of classical force fields with the concept of bond order to simulate bond breaking/formation of chemical reactions :footcite:p:`vanduin2001,senftle2016`. Originally conceived for hydrocarbons in the gas phase, ReaxFF has been extended to a wide range of applications :footcite:p:`senftle2016`. ReaxFF in LAMMPS\cite{chenoweth2008,aktulga2012} supports both the QEq charge equilibration\cite{rappe1991,nakano1997} and atom-condensed Kohn-Sham DFT to second order (ACKS2)\cite{verstraelen2013,ohearn2020} methods to represent the dynamics of electron density while fixed partial charges in CHARMM do not.
 
-.. , including solvated proteins \cite{monti2016simulation,Zhang2018}.
-
-
 .. image:: https://media.springernature.com/full/springer-static/image/art%3A10.1038%2Fnpjcompumats.2015.11/MediaObjects/41524_2016_Article_BFnpjcompumats201511_Fig2_HTML.jpg
   :align: center
   :width: 62%
@@ -58,7 +55,7 @@ ReaxFF Force Fields
      - Source
    * - combustion
      - C / H
-     - n/a
+     - *n/a*
      - :footcite:t:`vanduin2001`
 
 Combustion Branch
@@ -77,17 +74,17 @@ Combustion Branch
    * - combustion
      - H/O/N/B
      - reaxff-weismiller2010.ff
-     -
+     - *n/a*
      - :footcite:t:`weismiller2010`
    * - FIXME
      - H/O/Au
      - reaxff-joshi2010.ff
-     -
+     - *n/a*
      - :footcite:t:`joshi2010`
    * - FIXME
      - C/H/O/N
      - reaxff-budzien2009.ff
-     -
+     - *n/a*
      - :footcite:t:`budzien2009`
    * - combustion
      - C/H/O
@@ -97,17 +94,17 @@ Combustion Branch
    * - FIXME
      - C/H/O/N/S/F/Pt/Cl/Ni/X
      - reaxff-singh2013.ff
-     -
+     - *n/a*
      - :footcite:t:`singh2013`
    * - FIXME
      - C/H/O/N/S
      - reaxff-mattsson2010.ff
-     -
+     - *n/a*
      - :footcite:t:`mattsson2010`
    * - combustion
      - C/H/O/N
      - reaxff-strachan2003.ff
-     -
+     - *n/a*
      - :footcite:t:`strachan2003`
    * - combustion
      - V/O/C/H
@@ -157,11 +154,16 @@ Water Branch
      - reaxff-monti2013.ff
      - CHONSMgPNaCuCl_v2.ff
      - :footcite:t:`monti2013`
-
-
-
-
-
+   * - water
+     - C/H/O/N/S/Mg/P/Na/Ti/Cl/F/Au
+     - reaxff-monti2016.ff
+     - CHONSMgPNaTiClFAu.ff
+     - :footcite:t:`monti2016`
+   * - water
+     - C/H/O/N/S/Mg/P/Na/Cu/Cl/X
+     - reaxff-zhang2018.ff
+     - CHON2017_weak.ff
+     - :footcite:t:`zhang2018`
 
 
 FitSNAP-ReaxFF
