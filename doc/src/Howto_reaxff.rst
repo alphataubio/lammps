@@ -1,20 +1,19 @@
 Reactive Force Field (ReaxFF)
 =============================
 
-.. The Reactive Force Field (ReaxFF) replaces fixed bond topologies of classical force fields with the concept of bond order to simulate bond breaking/formation of chemical reactions\cite{Duin2001}. Originally conceived for hydrocarbons in the gas phase, ReaxFF has been extended to a wide range of applications\cite{Senftle2016}, including solvated proteins \cite{monti2013,monti2016simulation,Zhang2018}. ReaxFF in LAMMPS\cite{chenoweth2008,aktulga2012} supports both the QEq charge equilibration\cite{rappe1991,nakano1997} and atom-condensed Kohn-Sham DFT to second order (ACKS2)\cite{verstraelen2013,ohearn2020} methods to represent the dynamics of electron density while fixed partial charges in CHARMM do not.
+The *Reactive Force Field (ReaxFF)* replaces fixed bond topologies of classical force fields with the concept of bond order to simulate bond breaking/formation of chemical reactions :footcite:p:`vanduin2001,senftle2016`. Originally conceived for hydrocarbons in the gas phase, ReaxFF has been extended to a wide range of applications :footcite:p:`senftle2016`. ReaxFF in LAMMPS\cite{chenoweth2008,aktulga2012} supports both the QEq charge equilibration\cite{rappe1991,nakano1997} and atom-condensed Kohn-Sham DFT to second order (ACKS2)\cite{verstraelen2013,ohearn2020} methods to represent the dynamics of electron density while fixed partial charges in CHARMM do not.
 
+.. , including solvated proteins \cite{monti2016simulation,Zhang2018}.
 
-.. `charmm-gui.org <https://charmm-gui.org/>`_.
 
 .. image:: https://media.springernature.com/full/springer-static/image/art%3A10.1038%2Fnpjcompumats.2015.11/MediaObjects/41524_2016_Article_BFnpjcompumats201511_Fig2_HTML.jpg
   :align: center
   :width: 62%
+  :target: https://doi.org/10.1038/npjcompumats.2015.11
 
-
-.. The `CHARMM force field <https://mackerell.umaryland.edu/charmm_ff.shtml>`_ :ref:`(MacKerell) <howto-MacKerell>` and `AMBER force field
-<https://ambermd.org/AmberModels.php>`_ :ref:`(Cornell) <howto-Cornell>` have potential energy function of the form
 
 ReaxFF Potential Functions
+--------------------------
 
 .. math::
 
@@ -48,7 +47,7 @@ ReaxFF Potential Functions
 ReaxFF Force Fields
 -------------------
 
-.. list-table:: Available force fields in LAMMPS
+.. list-table:: Historical serial Fortran 77 force fields (not compatible and not available)
    :widths: 10 10 10 70
    :header-rows: 1
    :align: center
@@ -60,7 +59,107 @@ ReaxFF Force Fields
    * - combustion
      - C / H
      - n/a
+     - :footcite:t:`vanduin2001`
+
+Combustion Branch
+^^^^^^^^^^^^^^^^^
+
+.. list-table:: Available COMBUSTION force fields in LAMMPS
+   :widths: 10 10 10 10 70
+   :header-rows: 1
+   :align: center
+
+   * - Branch
+     - Elements
+     - Filename (LAMMPS)
+     - `Filename (SCM) <https://www.scm.com/doc/ReaxFF/Included_Forcefields.html>`_
+     - Source
+   * - combustion
+     - H/O/N/B
+     - reaxff-weismiller2010.ff
      -
+     - :footcite:t:`weismiller2010`
+   * - FIXME
+     - H/O/Au
+     - reaxff-joshi2010.ff
+     -
+     - :footcite:t:`joshi2010`
+   * - FIXME
+     - C/H/O/N
+     - reaxff-budzien2009.ff
+     -
+     - :footcite:t:`budzien2009`
+   * - combustion
+     - C/H/O
+     - reaxff-chenoweth2008a.ff
+     - CHO.ff
+     - :footcite:t:`chenoweth2008a`
+   * - FIXME
+     - C/H/O/N/S/F/Pt/Cl/Ni/X
+     - reaxff-singh2013.ff
+     -
+     - :footcite:t:`singh2013`
+   * - FIXME
+     - C/H/O/N/S
+     - reaxff-mattsson2010.ff
+     -
+     - :footcite:t:`mattsson2010`
+   * - combustion
+     - C/H/O/N
+     - reaxff-strachan2003.ff
+     -
+     - :footcite:t:`strachan2003`
+   * - combustion
+     - V/O/C/H
+     - reaxff-chenoweth2008b.ff
+     - VOCH.ff
+     - :footcite:t:`chenoweth2008b`
+   * - combustion
+     - C/H/O/N/S/Si
+     - reaxff-liu2011.ff
+     - dispersion/CHONSSi-lg.ff
+     - :footcite:t:`liu2011`
+
+
+
+
+
+Water Branch
+^^^^^^^^^^^^
+
+.. list-table:: Available WATER force fields in LAMMPS
+   :widths: 10 10 10 10 70
+   :header-rows: 1
+   :align: center
+
+   * - Branch
+     - Elements
+     - Filename (LAMMPS)
+     - `Filename (SCM) <https://www.scm.com/doc/ReaxFF/Included_Forcefields.html>`_
+     - Source
+   * - water
+     - C/H/O/Fe
+     - reaxff-aryanpour2010.ff
+     - FeOCHCl.ff
+     - :footcite:t:`aryanpour2010`
+   * - water
+     - Zn/O/H
+     - reaxff-raymand2010.ff
+     - ZnOH.ff
+     - :footcite:t:`raymand2010`
+   * - water
+     - C/H/O/N
+     - reaxff-rahaman2011.ff
+     - Glycine.ff
+     - :footcite:t:`rahaman2011`
+   * - water
+     - C/H/O/N/S/Mg/P/Na/Cu/Cl
+     - reaxff-monti2013.ff
+     - CHONSMgPNaCuCl_v2.ff
+     - :footcite:t:`monti2013`
+
+
+
 
 
 
@@ -111,5 +210,5 @@ If a parameter set is not available for your intented application, then you can 
 
 .. ----------
 
-quux
+.. footbibliography::
 
