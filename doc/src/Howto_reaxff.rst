@@ -134,6 +134,12 @@ Combustion Branch
      - reaxff-muller2016.ff
      - Mue2016.ff
      - :footcite:t:`muller2016`
+   * -
+     - combustion
+     - C/H/O/S
+     - reaxff-komissarov2021.ff
+     - *n/a*
+     - :footcite:t:`komissarov2021`
 
 
 
