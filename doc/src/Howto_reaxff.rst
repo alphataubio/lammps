@@ -64,7 +64,7 @@ Combustion Branch
 ^^^^^^^^^^^^^^^^^
 
 .. list-table:: Available COMBUSTION force fields in LAMMPS
-   :widths: 3 10 10 10 10 67
+   :widths: 3 10 10 10 10 57
    :header-rows: 1
    :align: center
 
@@ -142,46 +142,54 @@ Water Branch
 ^^^^^^^^^^^^
 
 .. list-table:: Available WATER force fields in LAMMPS
-   :widths: 10 10 10 10 70
+   :widths: 3 10 10 10 10 57
    :header-rows: 1
    :align: center
 
-   * - Branch
+   * -
+     - Branch
      - Elements
      - Filename (LAMMPS)
      - `Filename (SCM) <https://www.scm.com/doc/ReaxFF/Included_Forcefields.html>`_
      - Source
-   * - water
+   * -
+     - water
      - C/H/O/Fe
      - reaxff-aryanpour2010.ff
      - FeOCHCl.ff
      - :footcite:t:`aryanpour2010`
-   * - water
+   * -
+     - water
      - Zn/O/H
      - reaxff-raymand2010.ff
      - ZnOH.ff
      - :footcite:t:`raymand2010`
-   * - water
+   * - \(k\)
+     - water
      - C/H/O/N
      - reaxff-rahaman2011.ff
      - Glycine.ff
      - :footcite:t:`rahaman2011`
-   * - water
+   * - \(l\)
+     - water
      - C/H/O/N/S/Mg/P/Na/Cu/Cl
      - reaxff-monti2013.ff
      - CHONSMgPNaCuCl_v2.ff
      - :footcite:t:`monti2013`
-   * - water
+   * -
+     - water
      - C/H/O/N/S/Mg/P/Na/Ti/Cl/F/Au
      - reaxff-monti2016.ff
      - CHONSMgPNaTiClFAu.ff
      - :footcite:t:`monti2016`
-   * - water
+   * -
+     - water
      - C/H/O/N/S/Mg/P/Na/Cu/Cl/X
      - reaxff-zhang2018.ff
      - CHON2017_weak.ff
      - :footcite:t:`zhang2018`
-   * - water
+   * -
+     - water
      - C/H/O/N
      - reaxff-trnka2018.ff
      - CHON2017_weak.ff
