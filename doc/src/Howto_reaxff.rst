@@ -45,15 +45,17 @@ ReaxFF Force Fields
 -------------------
 
 .. list-table:: Historical serial Fortran 77 force fields (not compatible and not available)
-   :widths: 10 10 10 70
+   :widths: 3 10 10 10 67
    :header-rows: 1
    :align: center
 
-   * - Branch
+   * -
+     - Branch
      - Elements
      - Filename
      - Source
-   * - combustion
+   * - \(a\)
+     - combustion
      - C / H
      - *n/a*
      - :footcite:t:`vanduin2001`
@@ -62,61 +64,76 @@ Combustion Branch
 ^^^^^^^^^^^^^^^^^
 
 .. list-table:: Available COMBUSTION force fields in LAMMPS
-   :widths: 10 10 10 10 70
+   :widths: 3 10 10 10 10 67
    :header-rows: 1
    :align: center
 
-   * - Branch
+   * -
+     - Branch
      - Elements
      - Filename (LAMMPS)
      - `Filename (SCM) <https://www.scm.com/doc/ReaxFF/Included_Forcefields.html>`_
      - Source
-   * - combustion
+   * -
+     - combustion
      - H/O/N/B
      - reaxff-weismiller2010.ff
      - *n/a*
      - :footcite:t:`weismiller2010`
-   * - FIXME
+   * -
+     - FIXME
      - H/O/Au
      - reaxff-joshi2010.ff
      - *n/a*
      - :footcite:t:`joshi2010`
-   * - FIXME
+   * -
+     - FIXME
      - C/H/O/N
      - reaxff-budzien2009.ff
      - *n/a*
      - :footcite:t:`budzien2009`
-   * - combustion
+   * -
+     - combustion
      - C/H/O
      - reaxff-chenoweth2008a.ff
      - CHO.ff
      - :footcite:t:`chenoweth2008a`
-   * - FIXME
+   * -
+     - FIXME
      - C/H/O/N/S/F/Pt/Cl/Ni/X
      - reaxff-singh2013.ff
      - *n/a*
      - :footcite:t:`singh2013`
-   * - FIXME
+   * -
+     - FIXME
      - C/H/O/N/S
      - reaxff-mattsson2010.ff
      - *n/a*
      - :footcite:t:`mattsson2010`
-   * - combustion
+   * -
+     - combustion
      - C/H/O/N
      - reaxff-strachan2003.ff
      - *n/a*
      - :footcite:t:`strachan2003`
-   * - combustion
+   * -
+     - combustion
      - V/O/C/H
      - reaxff-chenoweth2008b.ff
      - VOCH.ff
      - :footcite:t:`chenoweth2008b`
-   * - combustion
+   * -
+     - combustion
      - C/H/O/N/S/Si
      - reaxff-liu2011.ff
      - dispersion/CHONSSi-lg.ff
      - :footcite:t:`liu2011`
-
+   * -
+     - combustion
+     - C/H/O/S
+     - reaxff-muller2016.ff
+     - Mue2016.ff
+     - :footcite:t:`muller2016`
 
 
 
@@ -164,6 +181,14 @@ Water Branch
      - reaxff-zhang2018.ff
      - CHON2017_weak.ff
      - :footcite:t:`zhang2018`
+   * - water
+     - C/H/O/N
+     - reaxff-trnka2018.ff
+     - CHON2017_weak.ff
+     - :footcite:t:`trnka2018`
+
+
+
 
 
 FitSNAP-ReaxFF
