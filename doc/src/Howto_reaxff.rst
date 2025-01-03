@@ -51,7 +51,7 @@ ReaxFF Force Fields
 
    * -
      - Branch
-     - Elements
+     - Atoms
      - Filename
      - Source
    * - \(a\)
@@ -70,7 +70,7 @@ Combustion Branch
 
    * -
      - Branch
-     - Elements
+     - Atoms
      - Filename (LAMMPS)
      - `Filename (SCM) <https://www.scm.com/doc/ReaxFF/Included_Forcefields.html>`_
      - Source
@@ -78,7 +78,7 @@ Combustion Branch
      - combustion
      - H/O/N/B
      - reaxff-weismiller2010.ff
-     - *n/a*
+     - Ab.ff
      - :footcite:t:`weismiller2010`
    * -
      - FIXME
@@ -141,7 +141,26 @@ Combustion Branch
      - *n/a*
      - :footcite:t:`komissarov2021`
 
+Independent Branch
+^^^^^^^^^^^^^^^^^^
 
+.. list-table:: Available INDEPENDENT force fields in LAMMPS
+   :widths: 3 10 10 10 10 57
+   :header-rows: 1
+   :align: center
+
+   * -
+     - Branch
+     - Atoms
+     - Filename (LAMMPS)
+     - `Filename (SCM) <https://www.scm.com/doc/ReaxFF/Included_Forcefields.html>`_
+     - Source
+   * -
+     - independent
+     - I/Br/Pb/Cs
+     - reaxff-pols2024.ff
+     - IBrPbCs.ff
+     - :footcite:t:`pols2024`
 
 
 Water Branch
@@ -154,10 +173,16 @@ Water Branch
 
    * -
      - Branch
-     - Elements
+     - Atoms
      - Filename (LAMMPS)
      - `Filename (SCM) <https://www.scm.com/doc/ReaxFF/Included_Forcefields.html>`_
      - Source
+   * -
+     - water
+     - Au/C/S/O/H
+     - *n/a*
+     - AuCSOH.ff
+     - :footcite:t:`keith2010`
    * -
      - water
      - C/H/O/Fe
@@ -198,7 +223,7 @@ Water Branch
      - water
      - C/H/O/N
      - reaxff-trnka2018.ff
-     - CHON2017_weak.ff
+     - *n/a*
      - :footcite:t:`trnka2018`
 
 
