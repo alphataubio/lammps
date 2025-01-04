@@ -157,10 +157,19 @@ Independent Branch
      - Source
    * -
      - independent
+     - C/H/O/N/B/Al/Si/Cl
+     - reaxff-uene2024.ff
+     - CHONBAlSiCl.ff
+     - :footcite:t:`uene2024`
+   * -
+     - independent
      - I/Br/Pb/Cs
      - reaxff-pols2024.ff
      - IBrPbCs.ff
      - :footcite:t:`pols2024`
+
+
+
 
 
 Water Branch
@@ -189,6 +198,12 @@ Water Branch
      - reaxff-aryanpour2010.ff
      - FeOCHCl.ff
      - :footcite:t:`aryanpour2010`
+   * -
+     - water
+     - C/H/O/Zn
+     - reaxff-han2010.ff
+     - CHOZn.ff
+     - :footcite:t:`han2010`
    * -
      - water
      - Zn/O/H
@@ -225,6 +240,8 @@ Water Branch
      - reaxff-trnka2018.ff
      - *n/a*
      - :footcite:t:`trnka2018`
+
+
 
 
 
