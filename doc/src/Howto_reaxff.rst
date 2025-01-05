@@ -157,10 +157,28 @@ Independent Branch
      - Source
    * -
      - independent
+     - Li/Si/C
+     - reaxff-olou2023.ff
+     - LiSiC.ff
+     - :footcite:t:`olou2023`
+   * -
+     - independent
+     - Ni/Al
+     - reaxff-du2023.ff
+     - NiAl.ff
+     - :footcite:t:`du2023`
+   * -
+     - independent
      - C/H/O/N/B/Al/Si/Cl
      - reaxff-uene2024.ff
      - CHONBAlSiCl.ff
      - :footcite:t:`uene2024`
+   * -
+     - independent
+     - C/H/O/N/S/Si/Ge/Ga/Ag
+     - reaxff-niefind2024.ff
+     - CHONSSiGeGaAg.ff
+     - :footcite:t:`niefind2024`
    * -
      - independent
      - I/Br/Pb/Cs
