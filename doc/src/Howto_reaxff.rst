@@ -157,6 +157,24 @@ Independent Branch
      - Source
    * -
      - independent
+     - C/H/O/S/Mo/Ni/Au/Ti
+     - reaxff-mao2022.ff
+     - CHOSMoNiAuTi.ff
+     - :footcite:t:`mao2022`
+   * -
+     - independent
+     - Ru/H
+     - reaxff-onwudinanti2022.ff
+     - RuH.ff
+     - :footcite:t:`onwudinanti2022`
+   * -
+     - independent
+     - Mg/O
+     - reaxff-fiesinger2023.ff
+     - MgO.ff
+     - :footcite:t:`fiesinger2023`
+   * -
+     - independent
      - Li/Si/C
      - reaxff-olou2023.ff
      - LiSiC.ff
