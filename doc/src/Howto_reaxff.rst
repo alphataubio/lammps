@@ -44,7 +44,7 @@ ReaxFF Potential Functions
 ReaxFF Force Fields
 -------------------
 
-.. list-table:: Historical serial Fortran 77 force fields (not compatible and not available)
+.. list-table:: Historical serial Fortran 77 force fields (no longer compatible and not available)
    :widths: 3 10 10 10 67
    :header-rows: 1
    :align: center
@@ -244,7 +244,7 @@ Water Branch
 
 
 
-
+----
 
 
 FitSNAP-ReaxFF
