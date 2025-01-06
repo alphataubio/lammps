@@ -13,7 +13,7 @@
 ------------------------------------------------------------------------- */
 
 /* ----------------------------------------------------------------------
-   Contributing author: Mitch Murphy (alphataubio@gmail.com)
+   Contributing author: Mitch Murphy (alphataubio at gmail)
 ------------------------------------------------------------------------- */
 
 #include "pair_lj_spica_coul_long_kokkos.h"

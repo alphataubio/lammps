@@ -14,7 +14,7 @@
 
 /* ----------------------------------------------------------------------
    Contributing author:   Pieter in 't Veld (SNL)
-   Refactoring (2024/08): Mitch Murphy (alphataubio@gmail.com)
+   Refactoring (2024/08): Mitch Murphy (alphataubio at gmail)
 ------------------------------------------------------------------------- */
 
 #include "fix_deform_kokkos.h"

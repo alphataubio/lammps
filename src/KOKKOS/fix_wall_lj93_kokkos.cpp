@@ -13,7 +13,7 @@
 ------------------------------------------------------------------------- */
 
 /* ----------------------------------------------------------------------
-   Contributing author: Mitch Murphy (alphataubio@gmail.com)
+   Contributing author: Mitch Murphy (alphataubio at gmail)
 ------------------------------------------------------------------------- */
 
 #include "fix_wall_lj93_kokkos.h"

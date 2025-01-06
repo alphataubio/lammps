@@ -13,7 +13,7 @@
 ------------------------------------------------------------------------- */
 
 /* ----------------------------------------------------------------------
-   Contributing author: Mitch Murphy (alphataubio@gmail.com)
+   Contributing author: Mitch Murphy (alphataubio at gmail)
 
    Based on serial kspace lj-fsw sections (force-switched) provided by
    Robert Meissner and Lucio Colombi Ciacchi of Bremen University, Germany,

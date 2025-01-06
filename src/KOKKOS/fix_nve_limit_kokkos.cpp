@@ -13,7 +13,7 @@
 ------------------------------------------------------------------------- */
 
 /* ----------------------------------------------------------------------
-   Contributing author: Mitch Murphy, alphataubio at gmail
+   Contributing author: Mitch Murphy (alphataubio at gmail)
 ------------------------------------------------------------------------- */
 
 #include "fix_nve_limit_kokkos.h"
