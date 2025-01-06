@@ -157,6 +157,12 @@ Independent Branch
      - Source
    * -
      - independent
+     - Ru/N/H
+     - reaxff-kim2018.ff
+     - RuNH.ff
+     - :footcite:t:`kim2018`
+   * -
+     - independent
      - C/H/O/S/Mo/Ni/Au/Ti
      - reaxff-mao2022.ff
      - CHOSMoNiAuTi.ff
@@ -167,6 +173,12 @@ Independent Branch
      - reaxff-onwudinanti2022.ff
      - RuH.ff
      - :footcite:t:`onwudinanti2022`
+   * -
+     - independent
+     - C/H/O/N/S/Mg/P/Na/Cu/Cl/Ti/X
+     - reaxff-hou2022.ff
+     - CHONSMgPNaCuClTi.ff
+     - :footcite:t:`hou2022`
    * -
      - independent
      - Mg/O
@@ -276,6 +288,15 @@ Water Branch
      - reaxff-trnka2018.ff
      - *n/a*
      - :footcite:t:`trnka2018`
+   * -
+     - water
+     - C/H/O/N/S/Si/Ca/Cs/K/Sr/Na/Mg/Al/Cl/I/F/Li/X
+     - *n/a*
+     - CHONSSiCaCsKSrNaMgAlClIFLiX.ff
+     - :footcite:t:`muraleedharan2020`
+
+
+
 
 
 
