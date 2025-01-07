@@ -87,3 +87,7 @@ hr {
 p {
    margin-bottom: 12px;
 }
+
+td .line-block {
+    margin-bottom: 0px !important;
+}
