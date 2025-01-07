@@ -165,6 +165,12 @@ Independent Branch
      - :footcite:t:`buehler2006`
    * -
      - independent
+     - Ce/O
+     - *n/a*
+     - CeO.ff
+     - :footcite:t:`broqvist2015`
+   * -
+     - independent
      - Ru/N/H
      - reaxff-kim2018.ff
      - RuNH.ff
@@ -175,6 +181,18 @@ Independent Branch
      - reaxff-shin2018.ff
      - CHOLiAlTiP.ff
      - :footcite:t:`shin2018`
+   * -
+     - independent
+     - C/H/O/Li/Al/Ti/P
+     - Si/O/H
+     - SiOHv2.ff
+     - :footcite:t:`nayir2019`
+   * -
+     - independent
+     - C/H/O/N/S/Zr
+     - reaxff-dwivedi2020.ff
+     - CHONSZr.ff
+     - :footcite:t:`dwivedi2020`
    * -
      - independent
      - | C/H/Ga
@@ -316,6 +334,12 @@ Water Branch
      - reaxff-rahaman2011.ff
      - Glycine.ff
      - :footcite:t:`rahaman2011`
+   * -
+     - water
+     - C/H/O/N/S/Si/Na/P
+     - *n/a*
+     - CHONSSiNaP-tribology.ff
+     - :footcite:t:`yue2013`
    * - \(l\)
      - water
      - C/H/O/N/S/Mg/P/Na/Cu/Cl
@@ -346,6 +370,12 @@ Water Branch
      - reaxff-trnka2018.ff
      - *n/a*
      - :footcite:t:`trnka2018`
+   * -
+     - water
+     - C/H/O/N/S/Mg/P/Na/Ti/Cl/F/K/Li
+     - reaxff-ganeshan2020.ff
+     - CHONSMgPNaTiClFKLi.ff
+     - :footcite:t:`ganeshan2020`
    * -
      - water
      - C/H/O/N/S/Si/Ca/Cs/K/Sr/Na/Mg/Al/Cl/I/F/Li/X
