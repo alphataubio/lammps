@@ -171,6 +171,21 @@ Independent Branch
      - :footcite:t:`kim2018`
    * -
      - independent
+     - C/H/O/Li/Al/Ti/P
+     - reaxff-shin2018.ff
+     - CHOLiAlTiP.ff
+     - :footcite:t:`shin2018`
+   * -
+     - independent
+     - | C/H/Ga
+       | C/H/In
+     - | reaxff-rajabpour2021a.ff
+       | reaxff-rajabpour2021b.ff
+     - | GaCH-2020.ff
+       | InCH-2020.ff
+     - :footcite:t:`rajabpour2021`
+   * -
+     - independent
      - Ni/Cr
      - reaxff-shin2021.ff
      - NiCr.ff
@@ -187,6 +202,18 @@ Independent Branch
      - reaxff-yeon2021.ff
      - SiAlMgO.ff
      - :footcite:t:`yeon2021`
+   * -
+     - independent
+     - I/Pb/Cs/X
+     - reaxff-pols2021.ff
+     - CsPbI.ff
+     - :footcite:t:`pols2021`
+   * -
+     - independent
+     - H/O/N/Si/F
+     - reaxff-kim2021.ff
+     - HONSiF.ff
+     - :footcite:t:`kim2021`
    * -
      - independent
      - C/H/O/S/Mo/Ni/Au/Ti
@@ -243,7 +270,6 @@ Independent Branch
      - :footcite:t:`pols2024`
 
 
-https://youtu.be/V-YqJGZlc3c?si=ggyo7qY5b-kewLLI
 
 
 Water Branch
@@ -385,10 +411,10 @@ If a parameter set is not available for your intented application, then you can 
   HBD   p_hb1     Hydrogen bond energy
   ===== ========= ====================================
 
+----
 
-
-
-.. ----------
+ReaxFF Bibliography
+-------------------
 
 .. footbibliography::
 
