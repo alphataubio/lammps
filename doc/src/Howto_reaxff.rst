@@ -149,6 +149,8 @@ Independent Branch
    :header-rows: 1
    :align: center
 
+
+
    * -
      - Branch
      - Atoms
@@ -157,10 +159,34 @@ Independent Branch
      - Source
    * -
      - independent
+     - C/H/O/N/S/Si
+     - *n/a*
+     - CHNOSSi.ff
+     - :footcite:t:`buehler2006`
+   * -
+     - independent
      - Ru/N/H
      - reaxff-kim2018.ff
      - RuNH.ff
      - :footcite:t:`kim2018`
+   * -
+     - independent
+     - Ni/Cr
+     - reaxff-shin2021.ff
+     - NiCr.ff
+     - :footcite:t:`shin2021`
+   * -
+     - independent
+     - W/S/H/Al/O
+     - reaxff-nayir2021.ff
+     - WSHAlO.ff
+     - :footcite:t:`nayir2021`
+   * -
+     - independent
+     - Si/Al/Mg/O
+     - reaxff-yeon2021.ff
+     - SiAlMgO.ff
+     - :footcite:t:`yeon2021`
    * -
      - independent
      - C/H/O/S/Mo/Ni/Au/Ti
@@ -217,7 +243,7 @@ Independent Branch
      - :footcite:t:`pols2024`
 
 
-
+https://youtu.be/V-YqJGZlc3c?si=ggyo7qY5b-kewLLI
 
 
 Water Branch
@@ -278,6 +304,12 @@ Water Branch
      - :footcite:t:`monti2016`
    * -
      - water
+     - C/H/O/N/S/Si/Ge
+     - *n/a*
+     - CHONSSiGe_2016.ff
+     - :footcite:t:`wen2016`
+   * -
+     - water
      - C/H/O/N/S/Mg/P/Na/Cu/Cl/X
      - reaxff-zhang2018.ff
      - CHON2017_weak.ff
@@ -294,6 +326,14 @@ Water Branch
      - *n/a*
      - CHONSSiCaCsKSrNaMgAlClIFLiX.ff
      - :footcite:t:`muraleedharan2020`
+   * -
+     - water
+     - C/H/O/S/Mo/Ni/Li/B/F/P/N
+     - reaxff-liu2021.ff
+     - CHOSMoNiLiBFPN-2.ff
+     - :footcite:t:`liu2021`
+
+
 
 
 
