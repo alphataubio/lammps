@@ -61,7 +61,7 @@ extensions = [
     'sphinxcontrib.bibtex'
 ]
 
-bibtex_bibfiles = ['lammps.bib']
+bibtex_bibfiles = ['reaxff.bib']
 
 images_config = {
   'default_image_width' : '25%',

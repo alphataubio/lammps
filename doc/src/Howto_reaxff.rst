@@ -165,6 +165,12 @@ Independent Branch
      - :footcite:t:`buehler2006`
    * -
      - independent
+     - Zr/Y/O/H
+     - reaxff-mayernick2010.ff
+     - ZrYOHVac.ff
+     - :footcite:t:`mayernick2010`
+   * -
+     - independent
      - Ce/O
      - *n/a*
      - CeO.ff
@@ -183,8 +189,20 @@ Independent Branch
      - :footcite:t:`shin2018`
    * -
      - independent
-     - C/H/O/Li/Al/Ti/P
+     - Cu/Zr
+     - reaxff-huang2019.ff
+     - CuZr.ff
+     - :footcite:t:`huang2019`
+   * -
+     - independent
+     - Zr/Y/O/Ni/H
+     - reaxff-liu2019.ff
+     - ZrYONiH.ff
+     - :footcite:t:`liu2019`
+   * -
+     - independent
      - Si/O/H
+     - reaxff-nayir2019.ff
      - SiOHv2.ff
      - :footcite:t:`nayir2019`
    * -
@@ -193,6 +211,12 @@ Independent Branch
      - reaxff-dwivedi2020.ff
      - CHONSZr.ff
      - :footcite:t:`dwivedi2020`
+   * -
+     - independent
+     - C/H/O/N/Si
+     - reaxff-dwivedi2020.ff
+     - CHONSi.ff
+     - :footcite:t:`wang2020`
    * -
      - independent
      - | C/H/Ga
@@ -372,6 +396,18 @@ Water Branch
      - :footcite:t:`trnka2018`
    * -
      - water
+     - C/H/O/Cs/K/Na/Cl/I/F/Li
+     - reaxff-fedkin2019.ff
+     - CHOCsKNaClIFLi.ff
+     - :footcite:t:`fedkin2019`
+   * -
+     - water
+     - C/H/O/N
+     - reaxff-kowalik2019.ff
+     - CHON-2019.ff
+     - :footcite:t:`kowalik2019`
+   * -
+     - water
      - C/H/O/N/S/Mg/P/Na/Ti/Cl/F/K/Li
      - reaxff-ganeshan2020.ff
      - CHONSMgPNaTiClFKLi.ff
@@ -445,6 +481,8 @@ If a parameter set is not available for your intented application, then you can 
 
 ReaxFF Bibliography
 -------------------
+
+  :download:`download reaxff.bib<reaxff.bib>`
 
 .. footbibliography::
 
