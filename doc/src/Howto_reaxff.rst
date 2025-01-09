@@ -136,6 +136,12 @@ Combustion Branch
      - :footcite:t:`muller2016`
    * -
      - combustion
+     - C/H
+     - reaxff-mao2017.ff
+     - CH_aromatics.ff
+     - :footcite:t:`mao2017`
+   * -
+     - combustion
      - C/H/O/S
      - reaxff-komissarov2021.ff
      - *n/a*
@@ -177,16 +183,40 @@ Independent Branch
      - :footcite:t:`broqvist2015`
    * -
      - independent
+     - C/H/Fe
+     - reaxff-islam2016.ff
+     - CHFe.ff
+     - :footcite:t:`islam2016`
+   * -
+     - independent
      - Ru/N/H
      - reaxff-kim2018.ff
      - RuNH.ff
      - :footcite:t:`kim2018`
    * -
      - independent
+     - C/H/O/Ge
+     - reaxff-nayir2018.ff
+     - CHOGe.ff
+     - :footcite:t:`nayir2018`
+   * -
+     - independent
      - C/H/O/Li/Al/Ti/P
      - reaxff-shin2018.ff
      - CHOLiAlTiP.ff
      - :footcite:t:`shin2018`
+   * -
+     - independent
+     - C/H/O/N/S/Si
+     - reaxff-soria2018.ff
+     - CHONSSi.ff
+     - :footcite:t:`soria2018`
+   * -
+     - independent
+     - C/H/O/S/Cu/Cl/X
+     - reaxff-yeon2018.ff
+     - CuSCH.ff
+     - :footcite:t:`yeon2018`
    * -
      - independent
      - Cu/Zr
@@ -384,16 +414,22 @@ Water Branch
      - :footcite:t:`wen2016`
    * -
      - water
-     - C/H/O/N/S/Mg/P/Na/Cu/Cl/X
-     - reaxff-zhang2018.ff
-     - CHON2017_weak.ff
-     - :footcite:t:`zhang2018`
+     - C/H/O/Si/Na
+     - reaxff-hahn2018.ff
+     - CHOSiNa.ff
+     - :footcite:t:`hahn2018`
    * -
      - water
      - C/H/O/N
      - reaxff-trnka2018.ff
      - *n/a*
      - :footcite:t:`trnka2018`
+   * -
+     - water
+     - C/H/O/N/S/Mg/P/Na/Cu/Cl/X
+     - reaxff-zhang2018.ff
+     - CHON2017_weak.ff
+     - :footcite:t:`zhang2018`
    * -
      - water
      - C/H/O/Cs/K/Na/Cl/I/F/Li
