@@ -101,6 +101,11 @@ Combustion Branch
      - dispersion/CHONSSi-lg.ff
      - :footcite:t:`liu2011`
    * - combustion
+     - C/H/Na
+     - reaxff-hjertenaes2016.ff
+     - CHNa.ff
+     - :footcite:t:`hjertenaes2016`
+   * - combustion
      - C/H/O/S
      - reaxff-muller2016.ff
      - Mue2016.ff
@@ -135,25 +140,25 @@ Independent Branch
      - `Filename (SCM) <https://www.scm.com/doc/ReaxFF/Included_Forcefields.html>`_
      - Source
    * - independent
-     - C/H/O/N/S/Si
-     - *n/a*
-     - CHNOSSi.ff
-     - :footcite:t:`buehler2006`
-   * - independent
      - Zr/Y/O/H
      - reaxff-mayernick2010.ff
      - ZrYOHVac.ff
      - :footcite:t:`mayernick2010`
    * - independent
-     - Ce/O
-     - *n/a*
-     - CeO.ff
-     - :footcite:t:`broqvist2015`
-   * - independent
      - C/H/Fe
      - reaxff-islam2016.ff
      - CHFe.ff
      - :footcite:t:`islam2016`
+   * - independent
+     - H/O/Si/Al/Li
+     - reaxff-ostadhossein2016.ff
+     - HOSiAlLi.ff
+     - :footcite:t:`ostadhossein2016`
+   * - independent
+     - C/H/Ar/He/Ne/Kr
+     - reaxff-yoon2016.ff
+     - CHArHeNeKr.ff
+     - :footcite:t:`yoon2016`
    * - independent
      - H/S/Mo
      - reaxff-ostadhossein2017.ff
@@ -305,11 +310,6 @@ Water Branch
      - `Filename (SCM) <https://www.scm.com/doc/ReaxFF/Included_Forcefields.html>`_
      - Source
    * - water
-     - Au/C/S/O/H
-     - *n/a*
-     - AuCSOH.ff
-     - :footcite:t:`keith2010`
-   * - water
      - C/H/O/Fe
      - reaxff-aryanpour2010.ff
      - FeOCHCl.ff
@@ -335,25 +335,30 @@ Water Branch
      - CaSiOH.ff
      - :footcite:t:`manzano2012`
    * - water
-     - C/H/O/N/S/Si/Na/P
-     - *n/a*
-     - CHONSSiNaP-tribology.ff
-     - :footcite:t:`yue2013`
+     - C/H/O/N/S/Mg/P/Na/Cu
+     - reaxff-huang2013.ff
+     - CuBTC.ff
+     - :footcite:t:`huang2013`
    * - water
      - C/H/O/N/S/Mg/P/Na/Cu/Cl
      - reaxff-monti2013.ff
      - CHONSMgPNaCuCl_v2.ff
      - :footcite:t:`monti2013`
    * - water
+     - Al/C/H/O
+     - reaxff-hong2016.ff
+     - AlCHO.ff
+     - :footcite:t:`hong2016`
+   * - water
+     - C/H/O/N/Si/Cu/Ag/Zn
+     - reaxff-lloyd2016.ff
+     - AgZnO.ff
+     - :footcite:t:`lloyd2016`
+   * - water
      - C/H/O/N/S/Mg/P/Na/Ti/Cl/F/Au
      - reaxff-monti2016.ff
      - CHONSMgPNaTiClFAu.ff
      - :footcite:t:`monti2016`
-   * - water
-     - C/H/O/N/S/Si/Ge
-     - *n/a*
-     - CHONSSiGe_2016.ff
-     - :footcite:t:`wen2016`
    * - water
      - C/H/O/Si/Na
      - reaxff-hahn2018.ff
@@ -394,11 +399,6 @@ Water Branch
      - reaxff-ganeshan2020.ff
      - CHONSMgPNaTiClFKLi.ff
      - :footcite:t:`ganeshan2020`
-   * - water
-     - C/H/O/N/S/Si/Ca/Cs/K/Sr/Na/Mg/Al/Cl/I/F/Li/X
-     - *n/a*
-     - CHONSSiCaCsKSrNaMgAlClIFLiX.ff
-     - :footcite:t:`muraleedharan2020`
    * - water
      - C/H/O/S/Mo/Ni/Li/B/F/P/N
      - reaxff-liu2021.ff
