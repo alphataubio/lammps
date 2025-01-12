@@ -18,6 +18,7 @@
 #include "bond_scan.h"
 
 #include "atom.h"
+#include "error.h"
 #include "input.h"
 #include "variable.h"
 
