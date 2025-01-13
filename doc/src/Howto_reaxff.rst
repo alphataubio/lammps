@@ -125,6 +125,22 @@ Combustion Branch
      - reaxff-komissarov2021.ff
      - *n/a*
      - :footcite:t:`komissarov2021`
+   * - combustion
+     - C/H/B/N
+     - reaxff-pai2016.ff
+     - CBN.ff
+     - :footcite:t:`pai2016`
+   * - combustion
+     - C/H/O/S/F/Cl/N
+     - reaxff-wood2014.ff
+     - CHOSFClN.ff
+     - :footcite:t:`wood2014`
+   * - combustion
+     - C/H/O/N/S/Si/Pt/Zr/Ni/Cu/Co/He/Ne/Ar/Kr/Xe
+     - reaxff-kamat2010.ff
+     - CHONSSiPtZrNiCuCoHeNeArKrXe.ff
+     - :footcite:t:`kamat2010`
+
 
 Independent Branch
 ^^^^^^^^^^^^^^^^^^
