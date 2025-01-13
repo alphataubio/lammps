@@ -85,6 +85,11 @@ Combustion Branch
      - `Filename (SCM) <https://www.scm.com/doc/ReaxFF/Included_Forcefields.html>`_
      - Source
    * - combustion
+     - C
+     - reaxff-srinivasan2015.ff
+     - C.ff
+     - :footcite:t:`srinivasan2015`
+   * - combustion
      - C/H
      - reaxff-mao2017.ff
      - CH_aromatics.ff
@@ -135,7 +140,13 @@ Combustion Branch
      - dispersion/CHONSSi-lg.ff
      - :footcite:t:`liu2011`
    * - combustion
-     - C/H/O/N/S/Si/Pt/Zr/Ni/Cu/Co/He/Ne/Ar/Kr/Xe
+     - C/H/O/N/S/Si/Ge
+     - reaxff-psofogiannakis2016.ff
+     - CHONSSiGe.ff
+     - :footcite:t:`psofogiannakis2016`
+   * - combustion
+     - | C/H/O/N/S/Si/Pt/Zr/Ni/
+       | Cu/Co/He/Ne/Ar/Kr/Xe
      - reaxff-kamat2010.ff
      - CHONSSiPtZrNiCuCoHeNeArKrXe.ff
      - :footcite:t:`kamat2010`
@@ -165,10 +176,16 @@ Combustion Branch
      - Ab.ff
      - :footcite:t:`weismiller2010`
    * - combustion
+     - O/Pt
+     - reaxff-fantauzzi2014.ff
+     - OPt.ff
+     - :footcite:t:`fantauzzi2014`
+   * - combustion
      - V/O/C/H
      - reaxff-chenoweth2008b.ff
      - VOCH.ff
      - :footcite:t:`chenoweth2008b`
+
 
 
 Independent Branch
@@ -380,6 +397,16 @@ Water Branch
      - FeOCHCl.ff
      - :footcite:t:`aryanpour2010`
    * - water
+     - C/H/O/Fe/Al/Ni/Cu/S/Cr
+     - reaxff-shin2015.ff
+     - CHOFeAlNiCuSCr.ff
+     - :footcite:t:`shin2015`
+   * - water
+     - C/H/O/Fe/Al/Ni/Cu/S/Cr
+     - reaxff-tavazza2015.ff
+     - CHOFeAlNiCuSCr_v3.ff
+     - :footcite:t:`tavazza2015`
+   * - water
      - C/H/O/N
      - reaxff-rahaman2011.ff
      - Glycine.ff
@@ -410,6 +437,11 @@ Water Branch
      - CHON2017_weak.ff
      - :footcite:t:`zhang2018`
    * - water
+     - C/H/O/N/S/Mg/P/Na/Ti/Cl/F
+     - reaxff-huygh2014.ff
+     - CHONSMgPNaTiClF.ff
+     - :footcite:t:`huygh2014`
+   * - water
      - C/H/O/N/S/Mg/P/Na/Ti/Cl/F/Au
      - reaxff-monti2016.ff
      - CHONSMgPNaTiClFAu.ff
@@ -424,6 +456,11 @@ Water Branch
      - reaxff-lloyd2016.ff
      - AgZnO.ff
      - :footcite:t:`lloyd2016`
+   * - water
+     - C/H/O/N/S/Si/Ca/Cs/K/Sr/Na/Mg/Al/Cu
+     - reaxff-psofogiannakis2015.ff
+     - CHONSSiCaCsKSrNaMgAlCu.ff
+     - :footcite:t:`psofogiannakis2015`
    * - water
      - C/H/O/S/Mo/Ni/Li/B/F/P/N
      - reaxff-liu2021.ff
