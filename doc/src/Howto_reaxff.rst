@@ -181,6 +181,11 @@ Combustion Branch
      - *n/a*
      - :footcite:t:`joshi2010`
    * - combustion
+     - Co
+     - reaxff-zhang2014b.ff
+     - Co.ff
+     - :footcite:t:`zhang2014b`
+   * - combustion
      - H/O/N/B
      - reaxff-weismiller2010.ff
      - Ab.ff
@@ -195,6 +200,11 @@ Combustion Branch
      - reaxff-fantauzzi2014.ff
      - OPt.ff
      - :footcite:t:`fantauzzi2014`
+   * - combustion
+     - Pd/H
+     - reaxff-senftle2014.ff
+     - PdH.ff
+     - :footcite:t:`senftle2014`
    * - combustion
      - V/O/C/H
      - reaxff-chenoweth2008b.ff
@@ -437,15 +447,25 @@ Water Branch
      - CHON-2019.ff
      - :footcite:t:`kowalik2019`
    * - water
+     - C/H/O/N/S/Fe
+     - reaxff-moerman2021.ff
+     - CHONSFe.ff
+     - :footcite:t:`moerman2021`
+   * - water
      - C/H/O/N/S/Mg/P/Na/Cu
      - reaxff-huang2013.ff
      - CuBTC.ff
      - :footcite:t:`huang2013`
    * - water
      - C/H/O/N/S/Mg/P/Na/Cu/Cl
-     - reaxff-monti2013.ff
+     - reaxff-monti2013a.ff
+     - CHONSMgPNaCuCl.ff
+     - :footcite:t:`monti2013a`
+   * - water
+     - C/H/O/N/S/Mg/P/Na/Cu/Cl
+     - reaxff-monti2013b.ff
      - CHONSMgPNaCuCl_v2.ff
-     - :footcite:t:`monti2013`
+     - :footcite:t:`monti2013b`
    * - water
      - C/H/O/N/S/Mg/P/Na/Cu/Cl/X
      - reaxff-zhang2018.ff
@@ -501,6 +521,11 @@ Water Branch
      - reaxff-han2010.ff
      - CHOZn.ff
      - :footcite:t:`han2010`
+   * - water
+     - H/O/Si/Al/Li
+     - reaxff-narayanan2011.ff
+     - SiOAlLi.ff
+     - :footcite:t:`narayanan2011`
    * - water
      - H/O/X
      - reaxff-zhang2017.ff
