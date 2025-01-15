@@ -115,6 +115,11 @@ Combustion Branch
      - CHO.ff
      - :footcite:t:`chenoweth2008a`
    * - combustion
+     - C/H/O/Ba/Zr/Y
+     - reaxff-vanduin2008.ff
+     - BaYZrCHO.ff
+     - :footcite:t:`vanduin2008`
+   * - combustion
      - C/H/O/N
      - reaxff-strachan2003.ff
      - *n/a*
@@ -150,6 +155,11 @@ Combustion Branch
      - CHONSSiNaP.ff
      - :footcite:t:`zhang2014`
    * - combustion
+     - C/H/O/N/S/Si/Pt/Zr/Ni/Cu/Co
+     - reaxff-nielson2005.ff
+     - CHONSSiPtZrNiCuCo.ff
+     - :footcite:t:`nielson2005`
+   * - combustion
      - C/H/O/N/S/Si/Pt/Ni/Cu/Co/Zr/Y/Ba
      - reaxff-merinov2014.ff
      - CHONSSiPtNiCuCoZrYBa.ff
@@ -166,6 +176,11 @@ Combustion Branch
      - Mue2016.ff
      - :footcite:t:`muller2016`
    * - combustion
+     - C/H/O/N/Si/S
+     - reaxff-kulkarni2013.ff
+     - SiONH.ff
+     - :footcite:t:`kulkarni2013`
+   * - combustion
      - C/H/O/S
      - reaxff-komissarov2021.ff
      - *n/a*
@@ -175,6 +190,11 @@ Combustion Branch
      - reaxff-wood2014.ff
      - CHOSFClN.ff
      - :footcite:t:`wood2014`
+   * - combustion
+     - C/H/Pt
+     - reaxff-sanz2008.ff
+     - PtCH.ff
+     - :footcite:t:`sanz2008`
    * - FIXME
      - H/O/Au
      - reaxff-joshi2010.ff
@@ -478,9 +498,14 @@ Water Branch
      - :footcite:t:`huygh2014`
    * - water
      - C/H/O/N/S/Mg/P/Na/Ti/Cl/F
-     - reaxff-kim2013.ff
+     - reaxff-kim2013a.ff
+     - TiOCHNCl.ff
+     - :footcite:t:`kim2013a`
+   * - water
+     - C/H/O/N/S/Mg/P/Na/Ti/Cl/F
+     - reaxff-kim2013b.ff
      - TiClOH.ff
-     - :footcite:t:`kim2013`
+     - :footcite:t:`kim2013b`
    * - water
      - C/H/O/N/S/Mg/P/Na/Ti/Cl/F/Au
      - reaxff-monti2016.ff
