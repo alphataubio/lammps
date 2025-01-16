@@ -85,6 +85,11 @@ Combustion Branch
      - `Filename (SCM) <https://www.scm.com/doc/ReaxFF/Included_Forcefields.html>`_
      - Source
    * - combustion
+     - Au/S/C/H
+     - reaxff-jarvi2011.ff
+     - AuSCH_2011.ff
+     - :footcite:t:`jarvi2011`
+   * - combustion
      - C
      - reaxff-srinivasan2015.ff
      - C.ff
@@ -145,6 +150,11 @@ Combustion Branch
      - dispersion/CHONSSi-lg.ff
      - :footcite:t:`liu2011`
    * - combustion
+     - C/H/O/N/S/Si
+     - reaxff-zhang2009.ff
+     - HE2.ff
+     - :footcite:t:`zhang2009`
+   * - combustion
      - C/H/O/N/S/Si/Ge
      - reaxff-psofogiannakis2016.ff
      - CHONSSiGe.ff
@@ -171,15 +181,15 @@ Combustion Branch
      - CHONSSiPtZrNiCuCoHeNeArKrXe.ff
      - :footcite:t:`kamat2010`
    * - combustion
-     - C/H/O/S
-     - reaxff-muller2016.ff
-     - Mue2016.ff
-     - :footcite:t:`muller2016`
-   * - combustion
      - C/H/O/N/Si/S
      - reaxff-kulkarni2013.ff
      - SiONH.ff
      - :footcite:t:`kulkarni2013`
+   * - combustion
+     - C/H/O/S
+     - reaxff-mueller2016.ff
+     - Mue2016.ff
+     - :footcite:t:`mueller2016`
    * - combustion
      - C/H/O/S
      - reaxff-komissarov2021.ff
@@ -195,6 +205,11 @@ Combustion Branch
      - reaxff-sanz2008.ff
      - PtCH.ff
      - :footcite:t:`sanz2008`
+   * - combustion
+     - C/H/O/Si
+     - reaxff-chenoweth2005.ff
+     - PDMSDecomp.ff
+     - :footcite:t:`chenoweth2005`
    * - FIXME
      - H/O/Au
      - reaxff-joshi2010.ff
@@ -216,6 +231,11 @@ Combustion Branch
      - LiS.ff
      - :footcite:t:`islam2015`
    * - combustion
+     - Ni/C/H
+     - reaxff-mueller2010.ff
+     - NiCH.ff
+     - :footcite:t:`mueller2010`
+   * - combustion
      - O/Pt
      - reaxff-fantauzzi2014.ff
      - OPt.ff
@@ -225,6 +245,11 @@ Combustion Branch
      - reaxff-senftle2014.ff
      - PdH.ff
      - :footcite:t:`senftle2014`
+   * - combustion
+     - Si/C/O/H/N/S
+     - reaxff-newsome2012.ff
+     - SiC.ff
+     - :footcite:t:`newsome2012`
    * - combustion
      - V/O/C/H
      - reaxff-chenoweth2008b.ff
