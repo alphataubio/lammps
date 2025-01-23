@@ -3274,7 +3274,7 @@ int Atom::extract_datatype(const char *name)
  *
 \verbatim embed:rst
 
-.. versionadded:: TBD
+.. versionadded:: 19Nov2024
 
 \endverbatim
  *
