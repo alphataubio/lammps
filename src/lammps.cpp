@@ -872,7 +872,9 @@ void LAMMPS::create()
   else
     atom->create_avec("atomic",0,nullptr,1);
 
-  group = new Group(this);
+  if (kokkos) group = new GroupKokkos(this);
+  else group = new Group(this);
+
   force = new Force(this);    // must be after group, to create temperature
 
   if (kokkos) modify = new ModifyKokkos(this);
@@ -1457,10 +1459,11 @@ void LAMMPS::print_config(FILE *fp)
   fmt::print(fp,"Compiler: {} with {}\nC++ standard: {}\n",
              platform::compiler_info(),platform::openmp_standard(),
              platform::cxx_standard());
+  fputs(Info::get_fmt_info().c_str(),fp);
 
   int major,minor;
   std::string infobuf = platform::mpi_info(major,minor);
-  fmt::print(fp,"MPI v{}.{}: {}\n\n",major,minor,infobuf);
+  fmt::print(fp,"\nMPI v{}.{}: {}\n\n",major,minor,infobuf);
 
   fmt::print(fp,"Accelerator configuration:\n\n{}\n",
              Info::get_accelerator_info());
