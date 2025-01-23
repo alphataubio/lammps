@@ -225,7 +225,7 @@ void FixACKS2ReaxFFKokkos<DeviceType>::pre_force(int /*vflag*/)
 
   allocate_array();
 
-  if (!allocated_flag || last_allocate < neighbor->lastcall) {
+  if (!allocated_flag || last_allocate < neighbor->lastcall || nlocal_last_allocate != nlocal) {
 
     // get max number of neighbor
 
@@ -281,6 +281,7 @@ void FixACKS2ReaxFFKokkos<DeviceType>::pre_force(int /*vflag*/)
     prev_last_rows_rank = last_rows_rank;
 
     last_allocate = update->ntimestep;
+    nlocal_last_allocate = nlocal;
   }
 
   // compute_H
