@@ -1296,7 +1296,7 @@ class lammps(object):
       elif p['block'] == 'BND':
 
         parameters_list = [
-                'De_s','De_p','De_pp','p_be1','p_bo5','v13cor','p_bo6','p_ovun1', 
+                'De_s','De_p','De_pp','p_be1','p_bo5','v13cor','p_bo6','p_ovun1',
                 'p_be2','p_bo3','p_bo4','','p_bo1','p_bo2','ovc','']
 
         n = parameters_list.index(p['name'])
