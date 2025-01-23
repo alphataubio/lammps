@@ -59,6 +59,7 @@
 
 // FIXME: how to handle when REAXFF package not included ?
 #include "pair_reaxff.h"
+#include "reaxff_api.h"
 
 #include <cstring>
 
@@ -2153,6 +2154,67 @@ int lammps_map_atom(void *handle, const void *id)
   else
     return -1;
 }
+
+/* ---------------------------------------------------------------------- */
+
+/** Set ReaxFF force field parameters
+ *
+\verbatim embed:rst
+
+
+
+\endverbatim
+ *
+ * \param  handle  pointer to a previously created LAMMPS instance
+ * \param  id      void pointer to the atom ID (of data type tagint, i.e. 32-bit or 64-bit integer)
+ * \return         local atom index or -1 if the atom is not found or no map exists
+ * */
+
+
+
+void lammps_set_reaxff_atm_parameter(void *handle, int type, int parameter_index, double value) {}
+
+void lammps_set_reaxff_bnd_parameter(void *handle, int type1, int type2, int parameter_index, double value) {
+
+  auto lmp = (LAMMPS *) handle;
+
+  BEGIN_CAPTURE
+  {
+    PairReaxFF *reaxff = static_cast<PairReaxFF *>(lmp->force->pair);
+    auto &tbp = reaxff->api->system->reax_param.tbp;
+    int j = type1 - 1;
+    int k = type2 - 1;
+
+    switch(parameter_index) {
+
+      case 0:   tbp[j][k].De_s    = tbp[k][j].De_s    = value;  break;
+      case 1:   tbp[j][k].De_p    = tbp[k][j].De_p    = value;  break;
+      case 2:   tbp[j][k].De_pp   = tbp[k][j].De_pp   = value;  break;
+      case 3:   tbp[j][k].p_be1   = tbp[k][j].p_be1   = value;  break;
+      case 4:   tbp[j][k].p_bo5   = tbp[k][j].p_bo5   = value;  break;
+      case 5:   tbp[j][k].v13cor  = tbp[k][j].v13cor  = value;  break;
+      case 6:   tbp[j][k].p_bo6   = tbp[k][j].p_bo6   = value;  break;
+      case 7:   tbp[j][k].p_ovun1 = tbp[k][j].p_ovun1 = value;  break;
+
+      case 8:   tbp[j][k].p_be2   = tbp[k][j].p_be2   = value;  break;
+      case 9:   tbp[j][k].p_bo3   = tbp[k][j].p_bo3   = value;  break;
+      case 10:  tbp[j][k].p_bo4   = tbp[k][j].p_bo4   = value;  break;
+      //case 11:      values.skip();
+      case 12:  tbp[j][k].p_bo1   = tbp[k][j].p_bo1   = value;  break;
+      case 13:  tbp[j][k].p_bo2   = tbp[k][j].p_bo2   = value;  break;
+      case 14:  tbp[j][k].ovc     = tbp[k][j].ovc     = value;  break;
+
+    }
+
+  }
+  END_CAPTURE
+
+}
+
+void lammps_set_reaxff_ofd_parameter(void *handle, int type1, int type2, int parameter_index, double value) {}
+void lammps_set_reaxff_ang_parameter(void *handle, int type1, int type2, int type3, int parameter_index, double value) {}
+void lammps_set_reaxff_tor_parameter(void *handle, int type1, int type2, int type3, int type4, int parameter_index, double value) {}
+void lammps_set_reaxff_hbd_parameter(void *handle, int type1, int type2, int parameter_index, double value) {}
 
 /* ---------------------------------------------------------------------- */
 

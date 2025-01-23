@@ -287,6 +287,19 @@ class lammps(object):
     self.lib.lammps_map_atom.argtypes = [c_void_p, c_void_p]
     self.lib.lammps_map_atom.restype = c_int
 
+    self.lib.lammps_set_reaxff_atm_parameter.argtypes = [c_void_p,c_int,c_int,c_double]
+    self.lib.lammps_set_reaxff_bnd_parameter.argtypes = [c_void_p,c_int,c_int,c_int,c_double]
+    self.lib.lammps_set_reaxff_ofd_parameter.argtypes = [c_void_p,c_int,c_int,c_int,c_double]
+    self.lib.lammps_set_reaxff_ang_parameter.argtypes = [c_void_p,c_int,c_int,c_int,c_int,c_double]
+    self.lib.lammps_set_reaxff_tor_parameter.argtypes = [c_void_p,c_int,c_int,c_int,c_int,c_int,c_double]
+    self.lib.lammps_set_reaxff_hbd_parameter.argtypes = [c_void_p,c_int,c_int,c_int,c_double]
+    self.lib.lammps_set_reaxff_atm_parameter.restype = None
+    self.lib.lammps_set_reaxff_bnd_parameter.restype = None
+    self.lib.lammps_set_reaxff_ofd_parameter.restype = None
+    self.lib.lammps_set_reaxff_ang_parameter.restype = None
+    self.lib.lammps_set_reaxff_tor_parameter.restype = None
+    self.lib.lammps_set_reaxff_hbd_parameter.restype = None
+
     self.lib.lammps_get_thermo.argtypes = [c_void_p, c_char_p]
     self.lib.lammps_get_thermo.restype = c_double
 
@@ -1116,6 +1129,60 @@ class lammps(object):
 
     tag = self.c_tagint(id)
     return self.lib.lammps_map_atom(self.lmp, pointer(tag))
+
+  # -------------------------------------------------------------------------
+  # set reaxff force field parameter(s)
+
+  #   {'block': 'BND', 'types': [1, 2], 'name': 'De_s', 'value': 167.2086},
+
+
+  def set_reaxff_parameters(self, parameters):
+    """set reaxff force field parameter(s)
+
+    :param parameters: list of dictionaries with parameters to set
+    :return: None
+    """
+
+    for p in parameters:
+
+      a = p['types']
+      v = p['value']
+
+      if p['block'] == 'ATM':
+        with ExceptionCheck(self):
+          self.lib.lammps_set_reaxff_atm_parameter(self.lmp,a[0],n,v)
+
+      elif p['block'] == 'BND':
+
+        parameters_list = [
+                'De_s','De_p','De_pp','p_be1','p_bo5','v13cor','p_bo6','p_ovun1', 
+                'p_be2','p_bo3','p_bo4','','p_bo1','p_bo2','ovc','']
+
+        n = parameters_list.index(p['name'])
+
+        with ExceptionCheck(self):
+          self.lib.lammps_set_reaxff_bnd_parameter(self.lmp,a[0],a[1],n,v)
+
+      elif p['block'] == 'OFD':
+        with ExceptionCheck(self):
+          self.lib.lammps_set_reaxff_ofd_parameter(self.lmp,a[0],a[1],n,v)
+
+      elif p['block'] == 'ANG':
+        with ExceptionCheck(self):
+          self.lib.lammps_set_reaxff_ang_parameter(self.lmp,a[0],a[1],a[2],n,v)
+
+      elif p['block'] == 'TOR':
+        with ExceptionCheck(self):
+          self.lib.lammps_set_reaxff_tor_parameter(self.lmp,a[0],a[1],a[2],a[3],n,v)
+
+      elif p['block'] == 'HBD':
+        with ExceptionCheck(self):
+          self.lib.lammps_set_reaxff_hbd_parameter(self.lmp,a[0],a[1],n,v)
+
+      else:
+        # FIXME: error message block not recognized
+        pass
+
 
   # -------------------------------------------------------------------------
   # extract per-atom info datatype
