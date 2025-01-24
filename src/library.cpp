@@ -2165,7 +2165,64 @@ int lammps_map_atom(void *handle, const void *id)
 
 
 
-void lammps_set_reaxff_atm_parameter(void *handle, int type, int parameter_index, double value) {}
+void lammps_set_reaxff_atm_parameter(void *handle, int type, int parameter_index, double value) {
+
+  auto lmp = (LAMMPS *) handle;
+
+  BEGIN_CAPTURE
+  {
+    PairReaxFF *reaxff = static_cast<PairReaxFF *>(lmp->force->pair);
+    auto &sbp = reaxff->api->system->reax_param.sbp;
+    int i = type - 1;
+
+    switch(parameter_index) {
+
+      // line one
+      case 0:    sbp[i].r_s         = value;      break;
+      case 1:    sbp[i].valency     = value;      sbp[i].nlp_opt = 0.5 * (sbp[i].valency_e-sbp[i].valency); break;
+      case 2:    sbp[i].mass        = value;      break;
+      case 3:    sbp[i].r_vdw       = value;      break;
+      case 4:    sbp[i].epsilon     = value;      break;
+      case 5:    sbp[i].gamma       = value;      break;
+      case 6:    sbp[i].r_pi        = value;      break;
+      case 7:    sbp[i].valency_e   = value;      sbp[i].nlp_opt = 0.5 * (sbp[i].valency_e-sbp[i].valency); break;
+
+      // line two
+      case 8:    sbp[i].alpha       = value;      break;
+      case 9:    sbp[i].gamma_w     = value;      break;
+      case 10:   sbp[i].valency_boc = value;      break;
+      case 11:   sbp[i].p_ovun5     = value;      break;
+      //case 12:    values.skip();
+      case 13:   sbp[i].chi         = value;      break;
+      case 14:   sbp[i].eta         = 2.0*value;  break;
+      case 15:   sbp[i].p_hbond     = (int)value; break;
+
+      // line three
+      case 16:   sbp[i].r_pi_pi     = value;      break;
+      case 17:   sbp[i].p_lp2       = value;      break;
+      //case 18:    values.skip();
+      case 19:   sbp[i].b_o_131     = value;      break;
+      case 20:   sbp[i].b_o_132     = value;      break;
+      case 21:   sbp[i].b_o_133     = value;      break;
+      case 22:   sbp[i].bcut_acks2  = value;      break;
+      //case 23:    values.skip();
+
+      // line four
+      case 24:   sbp[i].p_ovun2     = value;      break;
+      case 25:   sbp[i].p_val3      = value;      break;
+      //case 26:    values.skip();
+      case 27:   sbp[i].valency_val = value;      break;
+      case 28:   sbp[i].p_val5      = value;      break;
+      case 29:   sbp[i].rcore2      = value;      break;
+      case 30:   sbp[i].ecore2      = value;      break;
+      case 31:   sbp[i].acore2      = value;      break;
+
+    }
+
+  }
+  END_CAPTURE
+
+}
 
 void lammps_set_reaxff_bnd_parameter(void *handle, int type1, int type2, int parameter_index, double value) {
 
@@ -2180,6 +2237,7 @@ void lammps_set_reaxff_bnd_parameter(void *handle, int type1, int type2, int par
 
     switch(parameter_index) {
 
+      // line one
       case 0:   tbp[j][k].De_s    = tbp[k][j].De_s    = value;  break;
       case 1:   tbp[j][k].De_p    = tbp[k][j].De_p    = value;  break;
       case 2:   tbp[j][k].De_pp   = tbp[k][j].De_pp   = value;  break;
@@ -2189,6 +2247,7 @@ void lammps_set_reaxff_bnd_parameter(void *handle, int type1, int type2, int par
       case 6:   tbp[j][k].p_bo6   = tbp[k][j].p_bo6   = value;  break;
       case 7:   tbp[j][k].p_ovun1 = tbp[k][j].p_ovun1 = value;  break;
 
+      // line two
       case 8:   tbp[j][k].p_be2   = tbp[k][j].p_be2   = value;  break;
       case 9:   tbp[j][k].p_bo3   = tbp[k][j].p_bo3   = value;  break;
       case 10:  tbp[j][k].p_bo4   = tbp[k][j].p_bo4   = value;  break;
@@ -2204,10 +2263,65 @@ void lammps_set_reaxff_bnd_parameter(void *handle, int type1, int type2, int par
 
 }
 
-void lammps_set_reaxff_ofd_parameter(void *handle, int type1, int type2, int parameter_index, double value) {}
+void lammps_set_reaxff_ofd_parameter(void *handle, int type1, int type2, int parameter_index, double value) {
+
+  auto lmp = (LAMMPS *) handle;
+
+  if (value <= 0.0) return;
+
+  BEGIN_CAPTURE
+  {
+    PairReaxFF *reaxff = static_cast<PairReaxFF *>(lmp->force->pair);
+    auto &tbp = reaxff->api->system->reax_param.tbp;
+    int j = type1 - 1;
+    int k = type2 - 1;
+
+    switch(parameter_index) {
+
+      case 0:  tbp[j][k].D     = tbp[k][j].D     = value;     break;
+      case 1:  tbp[j][k].r_vdW = tbp[k][j].r_vdW = 2.0*value; break;
+      case 2:  tbp[j][k].alpha = tbp[k][j].alpha = value;     break;
+      case 3:  tbp[j][k].r_s   = tbp[k][j].r_s   = value;     break;
+      case 4:  tbp[j][k].r_p   = tbp[k][j].r_p   = value;     break;
+      case 5:  tbp[j][k].r_pp  = tbp[k][j].r_pp  = value;     break;
+      case 6:  tbp[j][k].lgcij = tbp[k][j].lgcij = value;     break;
+
+    }
+
+  }
+  END_CAPTURE
+
+}
+
 void lammps_set_reaxff_ang_parameter(void *handle, int type1, int type2, int type3, int parameter_index, double value) {}
+
 void lammps_set_reaxff_tor_parameter(void *handle, int type1, int type2, int type3, int type4, int parameter_index, double value) {}
-void lammps_set_reaxff_hbd_parameter(void *handle, int type1, int type2, int parameter_index, double value) {}
+
+void lammps_set_reaxff_hbd_parameter(void *handle, int type1, int type2, int parameter_index, double value) {
+
+  auto lmp = (LAMMPS *) handle;
+
+  BEGIN_CAPTURE
+  {
+    PairReaxFF *reaxff = static_cast<PairReaxFF *>(lmp->force->pair);
+    auto &hbp = reaxff->api->system->reax_param.hbp;
+    int j = type1 - 1;
+    int k = type2 - 1;
+    int l = type3 - 1;
+
+    switch(parameter_index) {
+
+      case 0:  hbp[j][k][l].r0_hb = value;  break;
+      case 1:  hbp[j][k][l].p_hb1 = value;  break;
+      case 2:  hbp[j][k][l].p_hb2 = value;  break;
+      case 3:  hbp[j][k][l].p_hb3 = value;  break;
+
+    }
+
+  }
+  END_CAPTURE
+
+}
 
 /* ---------------------------------------------------------------------- */
 
