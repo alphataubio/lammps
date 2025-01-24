@@ -2339,10 +2339,10 @@ void lammps_set_reaxff_tor_parameter(void *handle, int type1, int type2, int typ
     int l = type3 - 1;
     int m = type4 - 1;
 
-    omin = (type1==0) ? 0 : type1;
-    omax = (type1==0) ? ntypes-1 : type1;
-    pmin = (type4==0) ? 0 : type4;
-    pmax = (type4==0) ? ntypes-1 : type4;
+    int omin = (type1==0) ? 0 : type1;
+    int omax = (type1==0) ? ntypes-1 : type1;
+    int pmin = (type4==0) ? 0 : type4;
+    int pmax = (type4==0) ? ntypes-1 : type4;
 
     for (int o=omin; o<=omax; ++o)
       for (int p=pmin; p<=pmax; ++p)
