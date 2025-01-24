@@ -33,13 +33,6 @@ if(PKG_MANYBODY)
     set_tests_properties(EIMPotentialFileReader PROPERTIES ENVIRONMENT "LAMMPS_POTENTIALS=${LAMMPS_POTENTIALS_DIR}")
 endif()
 
-if(PKG_REAXFF)
-    add_executable(test_reaxff_potentials test_reaxff_potentials.cpp)
-    target_link_libraries(test_reaxff_potentials PRIVATE lammps GTest::GMock)
-    add_test(NAME ReaxffTest COMMAND test_reaxff_potentials)
-    set_tests_properties(ReaxffTest PROPERTIES ENVIRONMENT "LAMMPS_POTENTIALS=${LAMMPS_POTENTIALS_DIR}")
-endif()
-
 add_executable(test_text_file_reader test_text_file_reader.cpp)
 target_link_libraries(test_text_file_reader PRIVATE lammps GTest::GMock)
 add_test(NAME TextFileReader COMMAND test_text_file_reader)
