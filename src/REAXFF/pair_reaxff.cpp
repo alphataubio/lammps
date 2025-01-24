@@ -20,7 +20,6 @@
    Fix reaxff/bonds and fix reaxff/species for pair_style reaxff added by
         Ray Shan (Sandia)
    Hybrid and hybrid/overlay compatibility added by Ray Shan (Sandia)
-   coeff_string() added by Mitch Murphy for use with FitSNAP-ReaxFF
 ------------------------------------------------------------------------- */
 
 #include "pair_reaxff.h"
@@ -29,7 +28,6 @@
 #include "citeme.h"
 #include "comm.h"
 #include "error.h"
-#include "fix_acks2_reaxff.h"
 #include "fix_reaxff.h"
 #include "force.h"
 #include "memory.h"
@@ -37,7 +35,7 @@
 #include "neigh_list.h"
 #include "neighbor.h"
 #include "update.h"
-#include "utils.h"
+#include "fix_acks2_reaxff.h"
 
 #include <cmath>
 #include <cstring>
@@ -45,7 +43,6 @@
 #include "reaxff_api.h"
 
 using namespace LAMMPS_NS;
-using namespace LAMMPS_NS::utils;
 using namespace ReaxFF;
 
 static const char cite_pair_reax_c[] =
@@ -278,53 +275,14 @@ void PairReaxFF::settings(int narg, char **arg)
 
 void PairReaxFF::coeff(int nargs, char **args)
 {
-
-  if (nargs != 3 + atom->ntypes)
-    error->all(FLERR,"Incorrect args for pair coefficients");
-
-  FILE *fp;
-
-  if (api->control->me == 0) {
-      fp = open_potential(args[2], lmp, nullptr);
-      if (!fp)
-        error->one(FLERR,"The ReaxFF parameter file {} cannot be opened: {}",
-                   args[2], getsyserror());
-  }
-
-  coeff_fp(nargs, args, fp);
-
-}
-
-/* ---------------------------------------------------------------------- */
-
-void PairReaxFF::coeff_string(int nargs, char **args, char *force_field)
-{
-
-  if (nargs != 3 + atom->ntypes)
-    error->all(FLERR,"Incorrect args for pair coefficients");
-
-  FILE *fp;
-
-  if (api->control->me == 0) {
-      fp = fmemopen(force_field, strlen(force_field), "r");;
-      if (!fp)
-        error->one(FLERR,"The ReaxFF parameter string cannot be opened: {}",
-                   getsyserror());
-  }
-
-  coeff_fp(nargs, args, fp);
-
-}
-
-/* ---------------------------------------------------------------------- */
-
-void PairReaxFF::coeff_fp(int nargs, char **args, FILE *fp)
-{
   if (!allocated) allocate();
+
+  if (nargs != 3 + atom->ntypes)
+    error->all(FLERR,"Incorrect args for pair coefficients");
 
   // read ffield file
 
-  Read_Force_Field( args[2], fp, &(api->system->reax_param), api->control, world);
+  Read_Force_Field(args[2], &(api->system->reax_param), api->control, world);
 
   // read args that map atom types to elements in potential file
   // map[i] = which element the Ith atom type is, -1 if "NULL"

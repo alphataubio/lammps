@@ -53,7 +53,7 @@ namespace ReaxFF {
     const char *what() const noexcept override { return message.c_str(); }
   };
 
-  void Read_Force_Field(const char *filename, FILE *fp, reax_interaction *reax,
+  void Read_Force_Field(const char *filename, reax_interaction *reax,
                         control_params *control, MPI_Comm world)
   {
     char ****tor_flag;
@@ -72,7 +72,10 @@ namespace ReaxFF {
                                           filename, lineno, want, values.count()))
 
     if (control->me == 0) {
-
+      FILE *fp = open_potential(filename, lmp, nullptr);
+      if (!fp)
+        error->one(FLERR,"The ReaxFF parameter file {} cannot be opened: {}",
+                   filename, getsyserror());
       LAMMPS_NS::TextFileReader reader(fp, "ReaxFF parameter");
       reader.ignore_comments = false;
 
