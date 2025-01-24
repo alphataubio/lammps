@@ -769,34 +769,6 @@ void lammps_commands_string(void *handle, const char *str)
   END_CAPTURE
 }
 
-/* ---------------------------------------------------------------------- */
-
-/** Read ReaxFF force field.
- *
-\verbatim embed:rst
-
-This function reads ReaxFF force field as string instead of from a file.
-
-\endverbatim
- *
- * \param  handle  pointer to a previously created LAMMPS instance
- * \param  nargs    number of strings in *args*
- * \param  args    list of arguments as strings
- * \param  ff     ReaxFF force field as string */
-
-void lammps_pair_coeff_reaxff(void *handle, int nargs, char **args, char *ff)
-{
-
-  auto lmp = (LAMMPS *) handle;
-
-  BEGIN_CAPTURE
-  {
-    PairReaxFF *reaxff = static_cast<PairReaxFF *>(lmp->force->pair);
-    reaxff->coeff_string(nargs, args, ff);
-  }
-  END_CAPTURE
-}
-
 // -----------------------------------------------------------------------
 // Library functions to extract info from LAMMPS or set data in LAMMPS
 // -----------------------------------------------------------------------
