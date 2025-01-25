@@ -2172,25 +2172,71 @@ void lammps_set_reaxff_atm_parameter(void *handle, int type, int parameter_index
   BEGIN_CAPTURE
   {
     PairReaxFF *reaxff = static_cast<PairReaxFF *>(lmp->force->pair);
-    auto &sbp = reaxff->api->system->reax_param.sbp;
+    auto reax = &(reaxff->api->system->reax_param);
+    auto &gp = reax->gp;
+    auto &sbp = reax->sbp;
+    auto &tbp = reax->tbp;
     int i = type - 1;
+    int j, k, n = reax->num_atom_types;
 
     switch(parameter_index) {
 
       // line one
-      case 0:    sbp[i].r_s         = value;      break;
-      case 1:    sbp[i].valency     = value;      sbp[i].nlp_opt = 0.5 * (sbp[i].valency_e-sbp[i].valency); break;
+
+      case 0:
+        sbp[i].r_s = value;
+        for(j=0;j<n;++j) for(k=j;k<n;++k) tbp[k][j].r_s=tbp[j][k].r_s=0.5*(sbp[j].r_s+sbp[k].r_s);
+        break;
+
+      case 1:
+        sbp[i].valency = value;
+        sbp[i].nlp_opt = 0.5 * (sbp[i].valency_e-sbp[i].valency);
+        break;
+
       case 2:    sbp[i].mass        = value;      break;
-      case 3:    sbp[i].r_vdw       = value;      break;
-      case 4:    sbp[i].epsilon     = value;      break;
-      case 5:    sbp[i].gamma       = value;      break;
-      case 6:    sbp[i].r_pi        = value;      break;
-      case 7:    sbp[i].valency_e   = value;      sbp[i].nlp_opt = 0.5 * (sbp[i].valency_e-sbp[i].valency); break;
+
+      case 3:
+        sbp[i].r_vdw = value;
+        for(j=0;j<n;++j) for(k=j;k<n;++k) tbp[k][j].r_vdW=tbp[j][k].r_vdW=2.0*sqrt(sbp[j].r_vdw*sbp[k].r_vdw);
+        break;
+
+      case 4:
+        sbp[i].epsilon = value;
+        for(j=0;j<n;++j) for(k=j;k<n;++k) tbp[k][j].D=tbp[j][k].D=sqrt(sbp[j].epsilon*sbp[k].epsilon);
+        break;
+
+      case 5:
+        sbp[i].gamma = value;
+        for(j=0;j<n;++j) for(k=j;k<n;++k) tbp[k][j].gamma=tbp[j][k].gamma=pow(sbp[j].gamma*sbp[k].gamma,-1.5);
+        break;
+
+      case 6:
+        sbp[i].r_pi = value;
+        for(j=0;j<n;++j) for(k=j;k<n;++k) tbp[k][j].r_p=tbp[j][k].r_p=0.5*(sbp[j].r_pi+sbp[k].r_pi);
+        break;
+
+      case 7:
+        sbp[i].valency_e   = value;
+        sbp[i].nlp_opt = 0.5 * (sbp[i].valency_e-sbp[i].valency);
+        break;
 
       // line two
-      case 8:    sbp[i].alpha       = value;      break;
-      case 9:    sbp[i].gamma_w     = value;      break;
-      case 10:   sbp[i].valency_boc = value;      break;
+
+      case 8:
+        sbp[i].alpha = value;
+        for(j=0;j<n;++j) for(k=j;k<n;++k) tbp[k][j].alpha=tbp[j][k].alpha=sqrt(sbp[j].alpha*sbp[k].alpha);
+        break;
+
+      case 9:
+        sbp[i].gamma_w = value;
+        for(j=0;j<n;++j) for(k=j;k<n;++k) tbp[k][j].gamma_w=tbp[j][k].gamma_w=sqrt(sbp[j].gamma_w*sbp[k].gamma_w);
+        break;
+
+      case 10:
+        sbp[i].valency_boc = value;
+        if((sbp[i].mass<21)&&(sbp[i].valency_val!=sbp[i].valency_boc)) sbp[i].valency_val=sbp[i].valency_boc;
+        break;
+
       case 11:   sbp[i].p_ovun5     = value;      break;
       //case 12:    values.skip();
       case 13:   sbp[i].chi         = value;      break;
@@ -2198,12 +2244,29 @@ void lammps_set_reaxff_atm_parameter(void *handle, int type, int parameter_index
       case 15:   sbp[i].p_hbond     = (int)value; break;
 
       // line three
-      case 16:   sbp[i].r_pi_pi     = value;      break;
+      case 16:
+        sbp[i].r_pi_pi = value;
+        for(j=0;j<n;++j) for(k=j;k<n;++k) tbp[k][j].r_pp=tbp[j][k].r_pp=0.5*(sbp[j].r_pi_pi+sbp[k].r_pi_pi);
+        break;
+
       case 17:   sbp[i].p_lp2       = value;      break;
       //case 18:    values.skip();
-      case 19:   sbp[i].b_o_131     = value;      break;
-      case 20:   sbp[i].b_o_132     = value;      break;
-      case 21:   sbp[i].b_o_133     = value;      break;
+
+      case 19:
+        sbp[i].b_o_131 = value;
+        for(j=0;j<n;++j) for(k=j;k<n;++k) tbp[k][j].p_boc4=tbp[j][k].p_boc4=sqrt(sbp[j].b_o_131*sbp[k].b_o_131);
+        break;
+
+      case 20:
+        sbp[i].b_o_132 = value;
+        for(j=0;j<n;++j) for(k=j;k<n;++k) tbp[k][j].p_boc3=tbp[j][k].p_boc3=sqrt(sbp[j].b_o_132*sbp[k].b_o_132);
+        break;
+
+      case 21:
+        sbp[i].b_o_133 = value;
+        for(j=0;j<n;++j) for(k=j;k<n;++k) tbp[k][j].p_boc5=tbp[j][k].p_boc5=sqrt(sbp[j].b_o_133*sbp[k].b_o_133);
+        break;
+
       case 22:   sbp[i].bcut_acks2  = value;      break;
       //case 23:    values.skip();
 
@@ -2211,13 +2274,42 @@ void lammps_set_reaxff_atm_parameter(void *handle, int type, int parameter_index
       case 24:   sbp[i].p_ovun2     = value;      break;
       case 25:   sbp[i].p_val3      = value;      break;
       //case 26:    values.skip();
-      case 27:   sbp[i].valency_val = value;      break;
+
+      case 27:
+        sbp[i].valency_val = value;
+        if((sbp[i].mass<21)&&(sbp[i].valency_val!=sbp[i].valency_boc)) sbp[i].valency_val=sbp[i].valency_boc;
+        break;
+
       case 28:   sbp[i].p_val5      = value;      break;
-      case 29:   sbp[i].rcore2      = value;      break;
-      case 30:   sbp[i].ecore2      = value;      break;
-      case 31:   sbp[i].acore2      = value;      break;
+
+      case 29:
+        sbp[i].rcore2 = value;
+        for(j=0;j<n;++j) for(k=j;k<n;++k) tbp[k][j].rcore=tbp[j][k].rcore=sqrt(sbp[k].rcore2*sbp[j].rcore2);
+        break;
+
+      case 30:
+        sbp[i].ecore2 = value;
+        for(j=0;j<n;++j) for(k=j;k<n;++k) tbp[k][j].ecore=tbp[j][k].ecore=sqrt(sbp[k].ecore2*sbp[j].ecore2);
+        break;
+
+      case 31:
+        sbp[i].acore2 = value;
+        for(j=0;j<n;++j) for(k=j;k<n;++k) tbp[k][j].acore=tbp[j][k].acore=sqrt(sbp[k].acore2*sbp[j].acore2);
+        break;
+
+      case 32:
+        sbp[i].lgcij = value;
+        for(j=0;j<n;++j) for(k=j;k<n;++k) tbp[k][j].lgcij=tbp[j][k].lgcij=sqrt(sbp[k].lgcij*sbp[j].lgcij);
+        break;
+
+      case 33:
+        sbp[i].lgre = value;
+        for(j=0;j<n;++j) for(k=j;k<n;++k) tbp[k][j].lgre=tbp[j][k].lgre=2.0*gp.l[35]*sqrt(sbp[k].lgre*sbp[j].lgre);
+        break;
 
     }
+
+    // FIXME: van der Waals settings check
 
   }
   END_CAPTURE
@@ -2257,6 +2349,8 @@ void lammps_set_reaxff_bnd_parameter(void *handle, int type1, int type2, int par
       case 14:  tbp[j][k].ovc     = tbp[k][j].ovc     = value;  break;
 
     }
+
+
 
   }
   END_CAPTURE
@@ -2305,6 +2399,7 @@ void lammps_set_reaxff_ang_parameter(void *handle, int type1, int type2, int typ
     int k = type2 - 1;
     int l = type3 - 1;
 
+    // FIXME: check if cnt>1 is possible
     if( thbp[j][k][l].cnt != 1 )
       lmp->error->all(FLERR,"lammps_set_reaxff_ang_parameter(): thbp[{}][{}][{}].cnt != 1.", j, k, l );
 
