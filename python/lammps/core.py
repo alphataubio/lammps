@@ -1259,45 +1259,51 @@ class lammps(object):
     :return: None
     """
 
-    for p in parameters:
+    with ExceptionCheck(self):
+      for p in parameters:
 
-      a = p['types']
-      v = p['value']
+        a = p['types']
+        v = p['value']
 
-      if p['block'] == 'ATM':
-        with ExceptionCheck(self):
+        if p['block'] == 'ATM':
+
+          n = ['r_s', 'valency', 'mass', 'r_vdw', 'epsilon', 'gamma', 'r_pi', 'valency_e',
+            'alpha', 'gamma_w', 'valency_boc', 'p_ovun5', '', 'chi', 'eta', 'p_hbond',
+            'r_pi_pi', 'p_lp2', '', 'b_o_131', 'b_o_132', 'b_o_133', 'bcut_acks2', '',
+            'p_ovun2', 'p_val3', '', 'valency_val', 'p_val5', 'rcore2', 'ecore2', 'acore2'].index(p['name'])
+
           self.lib.lammps_set_reaxff_atm_parameter(self.lmp,a[0],n,v)
 
-      elif p['block'] == 'BND':
+        elif p['block'] == 'BND':
 
-        parameters_list = [
-                'De_s','De_p','De_pp','p_be1','p_bo5','v13cor','p_bo6','p_ovun1',
-                'p_be2','p_bo3','p_bo4','','p_bo1','p_bo2','ovc','']
+          n = ['De_s','De_p','De_pp','p_be1','p_bo5','v13cor','p_bo6','p_ovun1',
+            'p_be2','p_bo3','p_bo4','','p_bo1','p_bo2','ovc',''].index(p['name'])
 
-        n = parameters_list.index(p['name'])
-
-        with ExceptionCheck(self):
           self.lib.lammps_set_reaxff_bnd_parameter(self.lmp,a[0],a[1],n,v)
 
-      elif p['block'] == 'OFD':
-        with ExceptionCheck(self):
+        elif p['block'] == 'OFD':
+
+          n = ['D', 'r_vdW', 'alpha', 'r_s', 'r_p', 'r_pp'].index(p['name'])
           self.lib.lammps_set_reaxff_ofd_parameter(self.lmp,a[0],a[1],n,v)
 
-      elif p['block'] == 'ANG':
-        with ExceptionCheck(self):
+        elif p['block'] == 'ANG':
+
+          n = ['theta_00', 'p_val1', 'p_val2', 'p_coa1', 'p_val7', 'p_pen1', 'p_val4'].index(p['name'])
           self.lib.lammps_set_reaxff_ang_parameter(self.lmp,a[0],a[1],a[2],n,v)
 
-      elif p['block'] == 'TOR':
-        with ExceptionCheck(self):
+        elif p['block'] == 'TOR':
+
+          n = ['V1', 'V2', 'V3', 'p_tor1', 'p_cot1', '', ''].index(p['name'])
           self.lib.lammps_set_reaxff_tor_parameter(self.lmp,a[0],a[1],a[2],a[3],n,v)
 
-      elif p['block'] == 'HBD':
-        with ExceptionCheck(self):
+        elif p['block'] == 'HBD':
+
+          n = ['r0_hb', 'p_hb1', 'p_hb2', 'p_hb3'].index(p['name'])
           self.lib.lammps_set_reaxff_hbd_parameter(self.lmp,a[0],a[1],n,v)
 
-      else:
-        # FIXME: error message block not recognized
-        pass
+        else:
+          # FIXME: error message block not recognized
+          pass
 
 
   # -------------------------------------------------------------------------
